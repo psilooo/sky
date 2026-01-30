@@ -1,0 +1,42 @@
+<script setup lang="ts">
+const query = groq`*[_type == "mediaItem" && featured == true] | order(uploadDate desc) [0..4] {
+  _id, title, mediaType, image, videoUrl, videoThumbnail, caption,
+  "eventTitle": event->title
+}`
+const { data: items } = await useSanityQuery(query)
+const { urlFor } = useSanityImageUrl()
+
+const containerRef = ref<HTMLElement | null>(null)
+useStaggerReveal(containerRef, '.media-item')
+</script>
+
+<template>
+  <section v-if="items?.length" class="py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="font-display text-4xl md:text-5xl tracking-wider mb-12">MEDIA</h2>
+      <div ref="containerRef" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <NuxtLink
+          v-for="(item, i) in items"
+          :key="item._id"
+          to="/media"
+          class="media-item relative overflow-hidden rounded-lg group"
+          :class="i === 0 ? 'col-span-2 row-span-2 aspect-square' : 'aspect-[4/3]'"
+        >
+          <img
+            :src="urlFor(item.mediaType === 'photo' ? item.image : item.videoThumbnail).width(800).url()"
+            :alt="item.caption || item.title"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div class="absolute inset-0 bg-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <span v-if="item.mediaType === 'video'" class="text-4xl">▶</span>
+          </div>
+        </NuxtLink>
+      </div>
+      <div class="text-center mt-8">
+        <NuxtLink to="/media" class="font-display text-sm tracking-widest uppercase text-accent hover:text-white transition-colors">
+          View All →
+        </NuxtLink>
+      </div>
+    </div>
+  </section>
+</template>
