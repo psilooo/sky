@@ -5,7 +5,7 @@ import { schemaTypes } from './schemaTypes'
 export default defineConfig({
   name: 'sky-events-asia',
   title: 'SKY Events Asia',
-  projectId: 'YOUR_PROJECT_ID',
+  projectId: 'glybi1mo',
   dataset: 'production',
   plugins: [structureTool()],
   schema: { types: schemaTypes },

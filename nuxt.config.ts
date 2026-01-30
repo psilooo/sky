@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss', '@nuxtjs/sanity', '@nuxtjs/google-fonts'],
   css: ['~/assets/css/main.css'],
   sanity: {
-    projectId: 'YOUR_PROJECT_ID',
+    projectId: 'glybi1mo',
     dataset: 'production',
     apiVersion: '2025-01-30',
   },
