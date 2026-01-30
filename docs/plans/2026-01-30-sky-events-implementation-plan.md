@@ -1,6 +1,8 @@
 # SKY Events Asia Website — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+>
+> **For Claude:** REQUIRED SUB-SKILL: Use the `frontend-design` skill extensively when building all UI components, pages, and layouts. Every visual component should be developed using that skill's guidance for design quality, spacing, typography, color, and responsive behavior.
 
 **Goal:** Build a dark, immersive, motion-rich marketing website for SKY Events Asia, an electronic music festival production company.
 
