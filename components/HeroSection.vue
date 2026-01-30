@@ -28,8 +28,8 @@ onMounted(() => {
 
 <template>
   <section class="relative h-screen overflow-hidden flex items-center justify-center">
-    <!-- Video background -->
     <div ref="heroRef" class="absolute inset-0">
+      <!-- Video on desktop -->
       <video
         v-if="settings?.heroVideoUrl"
         :src="settings.heroVideoUrl"
@@ -37,13 +37,15 @@ onMounted(() => {
         loop
         muted
         playsinline
-        class="w-full h-full object-cover"
+        class="hidden md:block w-full h-full object-cover"
       />
+      <!-- Fallback image (shown on mobile, or when no video) -->
       <img
-        v-else-if="settings?.heroFallbackImage"
+        v-if="settings?.heroFallbackImage"
         :src="urlFor(settings.heroFallbackImage).width(1920).url()"
         alt=""
         class="w-full h-full object-cover"
+        :class="settings?.heroVideoUrl ? 'md:hidden' : ''"
       />
       <div class="absolute inset-0 bg-dark/60" />
     </div>
