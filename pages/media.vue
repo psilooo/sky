@@ -1,4 +1,11 @@
 <script setup lang="ts">
+useSeoMeta({
+  title: 'Media | SKY Events Asia',
+  ogTitle: 'Media | SKY Events Asia',
+  description: 'Photos and videos from SKY Events Asia festivals and events.',
+  ogDescription: 'Photos and videos from SKY Events Asia festivals and events.',
+})
+
 const query = groq`*[_type == "mediaItem"] | order(uploadDate desc) {
   _id, title, mediaType, image, videoUrl, videoThumbnail, caption, featured, uploadDate,
   "eventTitle": event->title,

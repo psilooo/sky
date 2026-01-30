@@ -15,6 +15,11 @@ export default defineNuxtConfig({
       'Space Grotesk': [300, 400, 500, 600, 700],
     },
   },
+  nitro: {
+    prerender: {
+      routes: ['/', '/events', '/about', '/media', '/contact'],
+    },
+  },
   app: {
     head: {
       title: 'SKY Events Asia',

@@ -1,4 +1,11 @@
 <script setup lang="ts">
+useSeoMeta({
+  title: 'Events | SKY Events Asia',
+  ogTitle: 'Events | SKY Events Asia',
+  description: 'Upcoming and past electronic music events by SKY Events Asia.',
+  ogDescription: 'Upcoming and past electronic music events by SKY Events Asia.',
+})
+
 const query = groq`*[_type == "event"] | order(date desc) {
   _id, title, date, venue, location, description, featuredImage, gallery, videoUrl, lineup
 }`

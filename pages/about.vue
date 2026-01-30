@@ -1,4 +1,11 @@
 <script setup lang="ts">
+useSeoMeta({
+  title: 'About | SKY Events Asia',
+  ogTitle: 'About | SKY Events Asia',
+  description: 'Learn about SKY Events Asia — our story, mission, and the team behind the festivals.',
+  ogDescription: 'Learn about SKY Events Asia — our story, mission, and the team behind the festivals.',
+})
+
 const settingsQuery = groq`*[_type == "siteSettings"][0]{ aboutStory, aboutHeroImage, aboutTagline }`
 const teamQuery = groq`*[_type == "teamMember"] | order(order asc) { _id, name, role, bio, photo }`
 

@@ -1,4 +1,11 @@
 <script setup lang="ts">
+useSeoMeta({
+  title: 'Contact | SKY Events Asia',
+  ogTitle: 'Contact | SKY Events Asia',
+  description: 'Get in touch with SKY Events Asia. Follow us on social media or reach out directly.',
+  ogDescription: 'Get in touch with SKY Events Asia. Follow us on social media or reach out directly.',
+})
+
 const query = groq`*[_type == "siteSettings"][0]{ contactEmail, contactPhone, contactTagline, socialLinks }`
 const { data: settings } = await useSanityQuery(query)
 
