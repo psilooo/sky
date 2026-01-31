@@ -20,13 +20,6 @@ export default defineNuxtConfig({
       routes: ['/', '/events', '/about', '/media', '/contact'],
     },
   },
-  vite: {
-    server: {
-      watch: {
-        ignored: ['**/sanity/**'],
-      },
-    },
-  },
   app: {
     head: {
       title: 'SKY Events Asia',
