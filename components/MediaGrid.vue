@@ -23,10 +23,14 @@ function getSize(item: any, index: number): string {
       @click="emit('select', i)"
     >
       <img
+        v-if="item.image || item.videoThumbnail"
         :src="urlFor(item.mediaType === 'photo' ? item.image : item.videoThumbnail).width(600).height(400).url()"
         :alt="item.caption || item.title"
         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
       />
+      <div v-else class="w-full h-full bg-dark-card flex items-center justify-center">
+        <span class="text-white/20 font-display text-sm">{{ item.title }}</span>
+      </div>
       <div class="absolute inset-0 bg-dark/0 group-hover:bg-dark/50 transition-colors flex items-center justify-center">
         <span v-if="item.mediaType === 'video'" class="text-4xl opacity-70 group-hover:opacity-100 transition-opacity">&#9654;</span>
       </div>

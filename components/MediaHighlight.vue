@@ -23,10 +23,14 @@ useStaggerReveal(containerRef, '.media-item')
           :class="i === 0 ? 'col-span-2 row-span-2 aspect-square' : 'aspect-[4/3]'"
         >
           <img
+            v-if="item.image || item.videoThumbnail"
             :src="urlFor(item.mediaType === 'photo' ? item.image : item.videoThumbnail).width(800).url()"
             :alt="item.caption || item.title"
             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
+          <div v-else class="w-full h-full bg-dark-card flex items-center justify-center">
+            <span class="text-white/20 font-display text-lg">{{ item.title }}</span>
+          </div>
           <div class="absolute inset-0 bg-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
             <span v-if="item.mediaType === 'video'" class="text-4xl">▶</span>
           </div>

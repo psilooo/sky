@@ -31,11 +31,14 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 
         <div class="max-w-5xl max-h-[85vh] w-full mx-6">
           <img
-            v-if="current?.mediaType === 'photo'"
+            v-if="current?.mediaType === 'photo' && current?.image"
             :src="urlFor(current.image).width(1600).url()"
             :alt="current.caption || current.title"
             class="w-full h-full object-contain"
           />
+          <div v-else-if="current?.mediaType === 'photo'" class="flex items-center justify-center h-64">
+            <span class="text-white/30 font-display text-xl">No image available</span>
+          </div>
           <div v-else-if="current?.mediaType === 'video'" class="aspect-video">
             <iframe :src="current.videoUrl" class="w-full h-full" allowfullscreen />
           </div>
