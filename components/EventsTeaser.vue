@@ -1,36 +1,59 @@
 <script setup lang="ts">
-const query = groq`*[_type == "event" && date > now()] | order(date asc) [0..2] { _id, title, date, venue, featuredImage }`
+import { gsap } from 'gsap'
+
+const props = withDefaults(defineProps<{
+  type?: 'upcoming' | 'recent'
+}>(), { type: 'upcoming' })
+
+const isUpcoming = props.type === 'upcoming'
+const query = isUpcoming
+  ? groq`*[_type == "event" && date > now()] | order(date asc) [0..2] { _id, title, date, venue, featuredImage }`
+  : groq`*[_type == "event" && date <= now()] | order(date desc) [0..2] { _id, title, date, venue, featuredImage }`
 const { data: events } = await useSanityQuery(query)
-const { urlFor } = useSanityImageUrl()
+const { imageUrl } = useR2Image()
 
 const containerRef = ref<HTMLElement | null>(null)
-useStaggerReveal(containerRef, '.event-card')
+onMounted(() => {
+  if (!containerRef.value) return
+  const children = containerRef.value.querySelectorAll('.event-card')
+  gsap.from(children, {
+    y: 60,
+    opacity: 0,
+    duration: 0.8,
+    stagger: 0.15,
+    ease: 'power3.out',
+    onComplete() { gsap.set(children, { clearProps: 'all' }) },
+  })
+})
 </script>
 
 <template>
-  <section v-if="events?.length" class="py-24 px-6">
-    <div class="max-w-7xl mx-auto">
-      <h2 class="font-display text-4xl md:text-5xl tracking-wider mb-12">UPCOMING EVENTS</h2>
-      <div ref="containerRef" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+  <section v-if="events?.length" class="pt-12 pb-12 px-6">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="font-display text-4xl md:text-5xl tracking-wider mb-12">{{ isUpcoming ? 'UPCOMING EVENTS' : 'RECENT EVENTS' }}</h2>
+      <div ref="containerRef" class="space-y-6">
         <NuxtLink
           v-for="event in events"
           :key="event._id"
-          to="/events"
-          class="event-card group relative overflow-hidden rounded-lg aspect-[4/3] cursor-pointer"
+          :to="`/events?tab=${type}&event=${event._id}`"
+          class="event-card group block relative overflow-hidden rounded-lg border border-white/5 hover:border-accent/30 transition-all duration-300 cursor-pointer"
         >
-          <img
-            v-if="event.featuredImage"
-            :src="urlFor(event.featuredImage).width(600).height(450).url()"
-            :alt="event.title"
-            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-          <div class="absolute inset-0 bg-gradient-to-t from-dark via-dark/40 to-transparent" />
-          <div class="absolute bottom-0 left-0 right-0 p-6">
-            <h3 class="font-display text-2xl tracking-wider">{{ event.title }}</h3>
-            <p class="text-white/60 mt-1">{{ new Date(event.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) }}</p>
-            <p v-if="event.venue" class="text-accent text-sm mt-1">{{ event.venue }}</p>
+          <div class="relative aspect-[1708/750] overflow-hidden">
+            <img
+              v-if="event.featuredImage"
+              :src="imageUrl(event.featuredImage)"
+              :alt="event.title"
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-dark via-dark/60 to-transparent" />
+            <div class="absolute bottom-0 left-0 right-0 p-6">
+              <h3 class="font-display text-3xl md:text-4xl tracking-wider">{{ event.title }}</h3>
+              <div class="flex items-center gap-4 mt-2 text-white/60">
+                <span>{{ new Date(event.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) }}</span>
+                <span v-if="event.venue" class="text-accent">{{ event.venue }}</span>
+              </div>
+            </div>
           </div>
-          <div class="absolute inset-0 border border-transparent group-hover:border-accent/30 group-hover:shadow-[0_0_30px_rgba(0,229,255,0.1)] rounded-lg transition-all duration-300" />
         </NuxtLink>
       </div>
     </div>

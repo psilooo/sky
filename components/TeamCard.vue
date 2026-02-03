@@ -1,6 +1,6 @@
 <script setup lang="ts">
-defineProps<{ member: { name: string; role: string; bio?: string; photo?: any } }>()
-const { urlFor } = useSanityImageUrl()
+defineProps<{ member: { name: string; role: string; bio?: string; photo?: string } }>()
+const { imageUrl } = useR2Image()
 </script>
 
 <template>
@@ -8,7 +8,7 @@ const { urlFor } = useSanityImageUrl()
     <div class="relative overflow-hidden rounded-lg aspect-[3/4] mb-4">
       <img
         v-if="member.photo"
-        :src="urlFor(member.photo).width(400).height(533).url()"
+        :src="imageUrl(member.photo)"
         :alt="member.name"
         class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
       />

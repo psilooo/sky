@@ -4,7 +4,7 @@ import type { SanityDocument } from '@sanity/client'
 
 const props = defineProps<{ event: SanityDocument; expanded: boolean }>()
 const emit = defineEmits<{ toggle: [id: string] }>()
-const { urlFor } = useSanityImageUrl()
+const { imageUrl } = useR2Image()
 const contentRef = ref<HTMLElement | null>(null)
 
 watch(() => props.expanded, (val) => {
@@ -24,10 +24,10 @@ watch(() => props.expanded, (val) => {
   >
     <!-- Card header (always visible) -->
     <button class="w-full text-left" @click="emit('toggle', event._id)">
-      <div class="relative h-48 md:h-56 overflow-hidden">
+      <div class="relative aspect-[1708/750] overflow-hidden">
         <img
           v-if="event.featuredImage"
-          :src="urlFor(event.featuredImage).width(1200).height(400).url()"
+          :src="imageUrl(event.featuredImage)"
           :alt="event.title"
           class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
@@ -68,7 +68,7 @@ watch(() => props.expanded, (val) => {
             <img
               v-for="(img, i) in event.gallery"
               :key="i"
-              :src="urlFor(img).width(300).height(200).url()"
+              :src="imageUrl(img)"
               :alt="`${event.title} gallery ${i + 1}`"
               class="w-full aspect-[3/2] object-cover rounded"
             />

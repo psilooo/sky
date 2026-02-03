@@ -11,7 +11,7 @@ const teamQuery = groq`*[_type == "teamMember"] | order(order asc) { _id, name, 
 
 const { data: settings } = await useSanityQuery(settingsQuery)
 const { data: team } = await useSanityQuery(teamQuery)
-const { urlFor } = useSanityImageUrl()
+const { imageUrl } = useR2Image()
 
 const storyRef = ref<HTMLElement | null>(null)
 const teamRef = ref<HTMLElement | null>(null)
@@ -25,7 +25,7 @@ useStaggerReveal(teamRef, '.team-card')
     <section class="relative h-[60vh] flex items-center justify-center overflow-hidden">
       <img
         v-if="settings?.aboutHeroImage"
-        :src="urlFor(settings.aboutHeroImage).width(1920).url()"
+        :src="imageUrl(settings.aboutHeroImage)"
         alt=""
         class="absolute inset-0 w-full h-full object-cover"
       />

@@ -4,14 +4,14 @@ const query = groq`*[_type == "mediaItem" && featured == true] | order(uploadDat
   "eventTitle": event->title
 }`
 const { data: items } = await useSanityQuery(query)
-const { urlFor } = useSanityImageUrl()
+const { imageUrl } = useR2Image()
 
 const containerRef = ref<HTMLElement | null>(null)
 useStaggerReveal(containerRef, '.media-item')
 </script>
 
 <template>
-  <section v-if="items?.length" class="py-24 px-6">
+  <section v-if="items?.length" class="pt-12 pb-24 px-6">
     <div class="max-w-7xl mx-auto">
       <h2 class="font-display text-4xl md:text-5xl tracking-wider mb-12">MEDIA</h2>
       <div ref="containerRef" class="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -24,7 +24,7 @@ useStaggerReveal(containerRef, '.media-item')
         >
           <img
             v-if="item.image || item.videoThumbnail"
-            :src="urlFor(item.mediaType === 'photo' ? item.image : item.videoThumbnail).width(800).url()"
+            :src="imageUrl(item.mediaType === 'photo' ? item.image : item.videoThumbnail)"
             :alt="item.caption || item.title"
             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />

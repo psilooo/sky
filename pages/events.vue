@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { gsap } from 'gsap'
+
 useSeoMeta({
   title: 'Events | SKY Events Asia',
   ogTitle: 'Events | SKY Events Asia',
@@ -11,7 +13,12 @@ const query = groq`*[_type == "event"] | order(date desc) {
 }`
 const { data: events } = await useSanityQuery(query)
 
-const activeTab = ref<'upcoming' | 'past'>('upcoming')
+const route = useRoute()
+
+const initialTab = route.query.tab === 'recent' ? 'recent' : 'upcoming'
+const initialEvent = typeof route.query.event === 'string' ? route.query.event : null
+
+const activeTab = ref<'upcoming' | 'recent'>(initialTab)
 const expandedId = ref<string | null>(null)
 
 const now = new Date().toISOString()
@@ -25,6 +32,22 @@ function toggleEvent(id: string) {
 
 const listRef = ref<HTMLElement | null>(null)
 useStaggerReveal(listRef, '.event-item')
+
+onMounted(() => {
+  if (initialEvent) {
+    nextTick(() => {
+      expandedId.value = initialEvent
+      // Wait for GSAP expand animation (500ms) + page settle before scrolling
+      setTimeout(() => {
+        const el = document.getElementById(`event-${initialEvent}`)
+        if (el) {
+          const y = el.getBoundingClientRect().top + window.scrollY - 80
+          gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 2, ease: 'power2.inOut' })
+        }
+      }, 550)
+    })
+  }
+})
 </script>
 
 <template>
@@ -35,7 +58,7 @@ useStaggerReveal(listRef, '.event-item')
         <!-- Tabs -->
         <div class="flex gap-4 mb-12">
           <button
-            v-for="tab in (['upcoming', 'past'] as const)"
+            v-for="tab in (['upcoming', 'recent'] as const)"
             :key="tab"
             class="font-display text-sm tracking-widest uppercase px-4 py-2 rounded transition-colors"
             :class="activeTab === tab ? 'bg-accent text-dark' : 'text-white/60 hover:text-white'"
@@ -46,16 +69,18 @@ useStaggerReveal(listRef, '.event-item')
         </div>
 
         <!-- Events list -->
-        <div ref="listRef" class="space-y-6">
-          <div v-if="displayedEvents.length === 0" class="text-center py-16">
-            <p class="text-white/40 text-lg">
-              {{ activeTab === 'upcoming' ? 'Stay tuned for upcoming events.' : 'No past events yet.' }}
-            </p>
+        <Transition name="page" mode="out-in">
+          <div ref="listRef" :key="activeTab" class="space-y-6">
+            <div v-if="displayedEvents.length === 0" class="text-center py-16">
+              <p class="text-white/40 text-lg">
+                {{ activeTab === 'upcoming' ? 'Stay tuned for upcoming events.' : 'No recent events yet.' }}
+              </p>
+            </div>
+            <div v-for="event in displayedEvents" :key="event._id" :id="`event-${event._id}`" class="event-item scroll-mt-20">
+              <EventCard :event="event" :expanded="expandedId === event._id" @toggle="toggleEvent" />
+            </div>
           </div>
-          <div v-for="event in displayedEvents" :key="event._id" class="event-item">
-            <EventCard :event="event" :expanded="expandedId === event._id" @toggle="toggleEvent" />
-          </div>
-        </div>
+        </Transition>
       </div>
     </section>
   </div>

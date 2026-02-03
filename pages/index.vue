@@ -10,7 +10,8 @@ useSeoMeta({
 <template>
   <div>
     <HeroSection />
-    <EventsTeaser />
+    <EventsTeaser type="upcoming" />
+    <EventsTeaser type="recent" />
     <AboutTeaser />
     <MediaHighlight />
   </div>

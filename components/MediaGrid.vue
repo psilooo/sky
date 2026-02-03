@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{ items: any[] }>()
 const emit = defineEmits<{ select: [index: number] }>()
-const { urlFor } = useSanityImageUrl()
+const { imageUrl } = useR2Image()
 
 const containerRef = ref<HTMLElement | null>(null)
 useStaggerReveal(containerRef, '.media-card')
@@ -24,7 +24,7 @@ function getSize(item: any, index: number): string {
     >
       <img
         v-if="item.image || item.videoThumbnail"
-        :src="urlFor(item.mediaType === 'photo' ? item.image : item.videoThumbnail).width(600).height(400).url()"
+        :src="imageUrl(item.mediaType === 'photo' ? item.image : item.videoThumbnail)"
         :alt="item.caption || item.title"
         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
       />

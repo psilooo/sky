@@ -5,7 +5,7 @@ const props = defineProps<{
   open: boolean
 }>()
 const emit = defineEmits<{ close: []; navigate: [index: number] }>()
-const { urlFor } = useSanityImageUrl()
+const { imageUrl } = useR2Image()
 
 const current = computed(() => props.items[props.currentIndex])
 
@@ -32,7 +32,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
         <div class="max-w-5xl max-h-[85vh] w-full mx-6">
           <img
             v-if="current?.mediaType === 'photo' && current?.image"
-            :src="urlFor(current.image).width(1600).url()"
+            :src="imageUrl(current.image)"
             :alt="current.caption || current.title"
             class="w-full h-full object-contain"
           />

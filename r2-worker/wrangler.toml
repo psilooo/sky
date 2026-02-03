@@ -1,0 +1,13 @@
+name = "sky-r2-worker"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "skyeventsasia"
+
+# Required secret (set via `wrangler secret put API_KEY`):
+#   API_KEY - Bearer token for authenticating upload/list/delete requests
+
+[vars]
+PUBLIC_BUCKET_URL = "https://media.skyeventsasia.com"

@@ -3,7 +3,7 @@ import { gsap } from 'gsap'
 
 const query = groq`*[_type == "siteSettings"][0]{ heroTagline, heroVideoUrl, heroFallbackImage }`
 const { data: settings } = await useSanityQuery(query)
-const { urlFor } = useSanityImageUrl()
+const { imageUrl } = useR2Image()
 
 const heroRef = ref<HTMLElement | null>(null)
 const taglineRef = ref<HTMLElement | null>(null)
@@ -32,34 +32,35 @@ onMounted(() => {
       <!-- Video on desktop -->
       <video
         v-if="settings?.heroVideoUrl"
-        :src="settings.heroVideoUrl"
         autoplay
         loop
         muted
         playsinline
+        poster="/hero-poster.jpg"
+        preload="metadata"
         class="hidden md:block w-full h-full object-cover"
-      />
+      >
+        <source :src="settings.heroVideoUrl" type="video/mp4" />
+      </video>
       <!-- Fallback image (shown on mobile, or when no video) -->
       <img
         v-if="settings?.heroFallbackImage"
-        :src="urlFor(settings.heroFallbackImage).width(1920).url()"
+        :src="imageUrl(settings.heroFallbackImage)"
         alt=""
         class="w-full h-full object-cover"
         :class="settings?.heroVideoUrl ? 'md:hidden' : ''"
       />
-      <div class="absolute inset-0 bg-dark/60" />
     </div>
-    <!-- Content -->
-    <div class="relative z-10 text-center">
-      <h1 class="font-display text-6xl md:text-8xl lg:text-9xl tracking-wider">
-        SKY EVENTS ASIA
-      </h1>
-      <p v-if="settings?.heroTagline" ref="taglineRef" class="mt-6 text-lg md:text-xl text-white/70 tracking-wide">
-        {{ settings.heroTagline }}
-      </p>
+    <!-- Logo -->
+    <div ref="taglineRef" class="relative z-10">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="-57 0 445.613 334.189" class="w-64 md:w-96 lg:w-[500px] fill-white">
+        <path d="M360.522,193.273c15.151-.49,28.173,12.558,28.091,28.166-.083,15.78-12.661,27.941-28.515,28.129-14.945.178-28.331-13.022-28.064-28.822.229-13.573,12.21-28.226,28.489-27.473Z"/>
+        <text font-family="Anton-Regular, Anton" font-size="266.208" letter-spacing="-.054em" transform="translate(0 247.49)"><tspan x="0" y="0">SEA</tspan></text>
+        <text font-family="Anton-Regular, Anton" font-size="60.49" letter-spacing="-.054em" transform="translate(5.46 311.578)"><tspan x="0" y="0">SKY EVENTS ASIA</tspan></text>
+      </svg>
     </div>
     <!-- Scroll indicator -->
-    <div ref="scrollIndicator" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/40">
+    <div ref="scrollIndicator" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-accent drop-shadow-[0_0_6px_rgba(0,229,255,0.5)]">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7" />
       </svg>
