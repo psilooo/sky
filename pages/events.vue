@@ -61,7 +61,7 @@ function setDetailRef(rowIdx: number, el: any) {
 let currentAnimation: gsap.core.Tween | null = null
 
 function scrollToPanel(el: HTMLElement) {
-  const y = el.getBoundingClientRect().top + window.scrollY - 90
+  const y = el.getBoundingClientRect().top + window.scrollY - 60
   gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 0.4, ease: 'power2.out' })
 }
 
