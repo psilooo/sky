@@ -62,7 +62,10 @@ let currentAnimation: gsap.core.Tween | null = null
 
 function scrollToPanel(el: HTMLElement) {
   const y = el.getBoundingClientRect().top + window.scrollY - 60
-  gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 0.4, ease: 'power2.out' })
+  // Temporarily disable smooth scroll so this is instant
+  document.documentElement.style.scrollBehavior = 'auto'
+  window.scrollTo(0, y)
+  document.documentElement.style.scrollBehavior = ''
 }
 
 function toggleEvent(id: string) {
