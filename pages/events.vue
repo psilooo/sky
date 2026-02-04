@@ -60,12 +60,24 @@ function setDetailRef(rowIdx: number, el: any) {
 
 let currentAnimation: gsap.core.Tween | null = null
 
-function scrollToPanel(el: HTMLElement) {
+function scrollThenExpand(el: HTMLElement, onDone?: () => void) {
   const y = el.getBoundingClientRect().top + window.scrollY - 60
-  // Temporarily disable smooth scroll so this is instant
-  document.documentElement.style.scrollBehavior = 'auto'
-  window.scrollTo(0, y)
-  document.documentElement.style.scrollBehavior = ''
+  const distance = Math.abs(y - window.scrollY)
+  if (distance < 10) {
+    // Already there, just expand
+    animateOpen(el, onDone)
+    return
+  }
+  // Scroll first, then expand after scroll completes
+  const duration = Math.min(0.6, Math.max(0.25, distance / 2000))
+  gsap.to(window, {
+    scrollTo: { y, autoKill: false },
+    duration,
+    ease: 'power2.inOut',
+    onComplete() {
+      animateOpen(el, onDone)
+    },
+  })
 }
 
 function toggleEvent(id: string) {
@@ -93,8 +105,7 @@ function toggleEvent(id: string) {
               const newRowIdx = expandedRowIndex()
               const newEl = detailRefs.value[newRowIdx]
               if (newEl) {
-                scrollToPanel(newEl)
-                animateOpen(newEl, () => {
+                scrollThenExpand(newEl, () => {
                   body.style.minHeight = ''
                 })
               } else {
@@ -133,8 +144,7 @@ function toggleEvent(id: string) {
       const rowIdx = expandedRowIndex()
       const el = detailRefs.value[rowIdx]
       if (el) {
-        scrollToPanel(el)
-        animateOpen(el)
+        scrollThenExpand(el)
       }
     })
   }
@@ -167,7 +177,8 @@ onMounted(() => {
         const el = detailRefs.value[rowIdx]
         if (el) {
           gsap.set(el, { height: 'auto', opacity: 1 })
-          scrollToPanel(el)
+          const y = el.getBoundingClientRect().top + window.scrollY - 60
+          gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 0.5, ease: 'power2.inOut' })
         }
         // Clear query params so refresh doesn't re-open this event
         router.replace({ query: {} })
