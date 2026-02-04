@@ -8,9 +8,10 @@ import { MeshGradient } from '@mesh-gradient/vue'
       class="gradient-bg"
       aria-hidden="true"
       :options="{
-        colors: ['#474747', '#AAE7EE', '#121212', '#FF779B'],
+        colors: ['#2E2E2E', '#79F0CC', '#FF7A90', '#8D9EC6'],
         seed: 42,
         animationSpeed: 0.4,
+        frequency: { x: 0.00010, y: 0.00020, delta: 0.00007 },
       }"
     />
   </ClientOnly>
