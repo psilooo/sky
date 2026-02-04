@@ -60,12 +60,9 @@ function setDetailRef(rowIdx: number, el: any) {
 
 let currentAnimation: gsap.core.Tween | null = null
 
-function scrollToCard(id: string) {
-  const cardEl = document.getElementById(`event-${id}`)
-  if (cardEl) {
-    const y = cardEl.getBoundingClientRect().top + window.scrollY - 30
-    gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 0.4, ease: 'power2.out' })
-  }
+function scrollToPanel(el: HTMLElement) {
+  const y = el.getBoundingClientRect().top + window.scrollY - 90
+  gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 0.4, ease: 'power2.out' })
 }
 
 function toggleEvent(id: string) {
@@ -81,7 +78,6 @@ function toggleEvent(id: string) {
     const oldEl = detailRefs.value[oldRowIdx]
     if (oldEl) {
       currentAnimation?.kill()
-      scrollToCard(id)
       currentAnimation = gsap.to(oldEl, {
         height: 0,
         opacity: 0,
@@ -94,6 +90,7 @@ function toggleEvent(id: string) {
               const newRowIdx = expandedRowIndex()
               const newEl = detailRefs.value[newRowIdx]
               if (newEl) {
+                scrollToPanel(newEl)
                 animateOpen(newEl, () => {
                   body.style.minHeight = ''
                 })
@@ -128,12 +125,12 @@ function toggleEvent(id: string) {
     }
   } else {
     // Opening fresh
-    scrollToCard(id)
     expandedId.value = newId
     nextTick(() => {
       const rowIdx = expandedRowIndex()
       const el = detailRefs.value[rowIdx]
       if (el) {
+        scrollToPanel(el)
         animateOpen(el)
       }
     })
@@ -167,9 +164,7 @@ onMounted(() => {
         const el = detailRefs.value[rowIdx]
         if (el) {
           gsap.set(el, { height: 'auto', opacity: 1 })
-          const rect = el.getBoundingClientRect()
-          const y = rect.top + window.scrollY - 100
-          gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 0.4, ease: 'power2.out' })
+          scrollToPanel(el)
         }
         // Clear query params so refresh doesn't re-open this event
         router.replace({ query: {} })
