@@ -52,7 +52,7 @@ function openLightbox(index: number) {
             <button
               v-for="filter in filters"
               :key="filter.value"
-              class="font-display text-base tracking-widest uppercase px-8 py-1.5 rounded-lg transition-all"
+              class="font-display text-base tracking-widest uppercase px-8 py-1.5 rounded-lg transition-all flex-1 text-center"
               :class="activeFilter === filter.value
                 ? 'bg-white/10 backdrop-blur-sm text-accent border border-white/15'
                 : 'text-white/60 hover:text-white border border-transparent'"
