@@ -45,7 +45,7 @@ onMounted(() => {
               :alt="event.title"
               class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
-            <div class="absolute inset-0 bg-gradient-to-t from-dark via-dark/30 to-transparent" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-white/5 to-transparent" />
             <div class="absolute bottom-0 left-0 right-0 p-6">
               <h3 class="font-display text-3xl md:text-4xl tracking-wider">{{ event.title }}</h3>
               <div class="flex items-center gap-4 mt-2 text-white/60">
