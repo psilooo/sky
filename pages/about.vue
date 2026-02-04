@@ -7,16 +7,12 @@ useSeoMeta({
 })
 
 const settingsQuery = groq`*[_type == "siteSettings"][0]{ aboutStory, aboutHeroImage, aboutTagline }`
-const teamQuery = groq`*[_type == "teamMember"] | order(order asc) { _id, name, role, bio, photo }`
 
 const { data: settings } = await useSanityQuery(settingsQuery)
-const { data: team } = await useSanityQuery(teamQuery)
 const { imageUrl } = useR2Image()
 
 const storyRef = ref<HTMLElement | null>(null)
-const teamRef = ref<HTMLElement | null>(null)
 useScrollReveal(storyRef)
-useStaggerReveal(teamRef, '.team-card')
 </script>
 
 <template>
@@ -43,16 +39,6 @@ useStaggerReveal(teamRef, '.team-card')
       </div>
     </section>
 
-    <!-- Team -->
-    <section v-if="team?.length" class="py-24 px-6 bg-dark-lighter">
-      <div class="max-w-5xl mx-auto">
-        <h2 class="font-display text-4xl md:text-5xl tracking-wider mb-12 text-center">THE TEAM</h2>
-        <div ref="teamRef" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          <div v-for="member in team" :key="member._id" class="team-card">
-            <TeamCard :member="member" />
-          </div>
-        </div>
-      </div>
-    </section>
+
   </div>
 </template>
