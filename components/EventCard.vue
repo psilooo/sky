@@ -18,7 +18,6 @@ const { imageUrl } = useR2Image()
         :alt="event.title"
         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
-      <div class="absolute inset-0 bg-dark/40" />
       <!-- Hover overlay: gradient + text -->
       <div class="absolute inset-0 bg-gradient-to-t from-dark via-dark/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       <div class="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
