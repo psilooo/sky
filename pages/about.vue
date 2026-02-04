@@ -25,7 +25,6 @@ useScrollReveal(storyRef)
         alt=""
         class="absolute inset-0 w-full h-full object-cover"
       />
-      <div class="absolute inset-0 bg-dark/70" />
       <div class="relative z-10 text-center">
         <PageHeader title="ABOUT" />
         <p v-if="settings?.aboutTagline" class="text-xl text-white/60 mt-2 px-6">{{ settings.aboutTagline }}</p>
