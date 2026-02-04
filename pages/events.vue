@@ -245,7 +245,6 @@ onUnmounted(() => {
                         :alt="expandedEvent.title"
                         class="w-full h-full object-cover"
                       />
-                      <div class="absolute inset-0 bg-gradient-to-t from-dark-lighter via-dark-lighter/60 to-transparent" />
                     </div>
 
                     <div class="p-6 md:p-8 space-y-6">
