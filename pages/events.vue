@@ -73,24 +73,41 @@ function toggleEvent(id: string) {
   const newId = wasExpanded === id ? null : id
 
   if (wasExpanded && wasExpanded !== id) {
-    // Switching: instantly collapse old, then scroll + expand new
-    currentAnimation?.kill()
+    // Switching: lock page height so closing the old panel doesn't yank the viewport
+    const body = document.body
+    body.style.minHeight = `${body.scrollHeight}px`
+
     const oldRowIdx = expandedRowIndex()
     const oldEl = detailRefs.value[oldRowIdx]
     if (oldEl) {
-      gsap.set(oldEl, { height: 0, opacity: 0 })
-    }
-    expandedId.value = newId
-    nextTick(() => {
-      nextTick(() => {
-        scrollToCard(id)
-        const newRowIdx = expandedRowIndex()
-        const newEl = detailRefs.value[newRowIdx]
-        if (newEl) {
-          animateOpen(newEl)
-        }
+      currentAnimation?.kill()
+      scrollToCard(id)
+      currentAnimation = gsap.to(oldEl, {
+        height: 0,
+        opacity: 0,
+        duration: 0.3,
+        ease: 'power2.in',
+        onComplete() {
+          expandedId.value = newId
+          nextTick(() => {
+            nextTick(() => {
+              const newRowIdx = expandedRowIndex()
+              const newEl = detailRefs.value[newRowIdx]
+              if (newEl) {
+                animateOpen(newEl, () => {
+                  body.style.minHeight = ''
+                })
+              } else {
+                body.style.minHeight = ''
+              }
+            })
+          })
+        },
       })
-    })
+    } else {
+      expandedId.value = newId
+      body.style.minHeight = ''
+    }
   } else if (wasExpanded === id) {
     // Collapsing current
     const rowIdx = expandedRowIndex()
@@ -123,7 +140,7 @@ function toggleEvent(id: string) {
   }
 }
 
-function animateOpen(el: HTMLElement) {
+function animateOpen(el: HTMLElement, onDone?: () => void) {
   currentAnimation?.kill()
   currentAnimation = gsap.fromTo(
     el,
@@ -133,6 +150,7 @@ function animateOpen(el: HTMLElement) {
       opacity: 1,
       duration: 0.5,
       ease: 'power2.out',
+      onComplete: onDone,
     }
   )
 }
