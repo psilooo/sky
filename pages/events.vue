@@ -144,14 +144,15 @@ function toggleEvent(id: string) {
       const rowIdx = expandedRowIndex()
       const el = detailRefs.value[rowIdx]
       if (el) {
-        animateOpen(el, () => {
+        animateOpen(el)
+        setTimeout(() => {
           const y = el.getBoundingClientRect().top + window.scrollY - 60
           gsap.to(window, {
             scrollTo: { y, autoKill: false },
-            duration: 0.5,
+            duration: 0.4,
             ease: 'power2.inOut',
           })
-        })
+        }, 200)
       }
     })
   }
