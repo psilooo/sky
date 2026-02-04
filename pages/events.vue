@@ -73,33 +73,24 @@ function toggleEvent(id: string) {
   const newId = wasExpanded === id ? null : id
 
   if (wasExpanded && wasExpanded !== id) {
-    // Switching: close current, then open new
+    // Switching: instantly collapse old, then scroll + expand new
+    currentAnimation?.kill()
     const oldRowIdx = expandedRowIndex()
     const oldEl = detailRefs.value[oldRowIdx]
     if (oldEl) {
-      currentAnimation?.kill()
-      currentAnimation = gsap.to(oldEl, {
-        height: 0,
-        opacity: 0,
-        duration: 0.3,
-        ease: 'power2.in',
-        onComplete() {
-          expandedId.value = newId
-          nextTick(() => {
-            nextTick(() => {
-              const newRowIdx = expandedRowIndex()
-              const newEl = detailRefs.value[newRowIdx]
-              if (newEl) {
-                animateOpen(newEl)
-              }
-              scrollToCard(id)
-            })
-          })
-        },
-      })
-    } else {
-      expandedId.value = newId
+      gsap.set(oldEl, { height: 0, opacity: 0 })
     }
+    expandedId.value = newId
+    nextTick(() => {
+      nextTick(() => {
+        scrollToCard(id)
+        const newRowIdx = expandedRowIndex()
+        const newEl = detailRefs.value[newRowIdx]
+        if (newEl) {
+          animateOpen(newEl)
+        }
+      })
+    })
   } else if (wasExpanded === id) {
     // Collapsing current
     const rowIdx = expandedRowIndex()
