@@ -29,15 +29,11 @@ const filteredItems = computed(() => {
   return allItems.value.filter((item: any) => item.eventId === activeFilter.value)
 })
 
-const filters = computed(() => {
-  const base = [
-    { label: 'All', value: 'all' },
-    { label: 'Photos', value: 'photo' },
-    { label: 'Videos', value: 'video' },
-  ]
-  const eventFilters = (events.value || []).map((e: any) => ({ label: e.title, value: e._id }))
-  return [...base, ...eventFilters]
-})
+const filters = [
+  { label: 'All', value: 'all' },
+  { label: 'Photos', value: 'photo' },
+  { label: 'Videos', value: 'video' },
+]
 
 function openLightbox(index: number) {
   lightboxIndex.value = index
@@ -51,18 +47,20 @@ function openLightbox(index: number) {
     <section class="px-6 pb-24">
       <div class="max-w-7xl mx-auto">
         <!-- Filter bar -->
-        <div class="flex flex-wrap gap-3 mb-12">
-          <button
-            v-for="filter in filters"
-            :key="filter.value"
-            class="font-display text-xs tracking-widest uppercase px-4 py-2 rounded-full border transition-all"
-            :class="activeFilter === filter.value
-              ? 'bg-accent text-dark border-accent'
-              : 'border-white/20 text-white/60 hover:border-accent/50 hover:text-white'"
-            @click="activeFilter = filter.value"
-          >
-            {{ filter.label }}
-          </button>
+        <div class="flex justify-center mb-12">
+          <div class="inline-flex gap-2 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-1.5">
+            <button
+              v-for="filter in filters"
+              :key="filter.value"
+              class="font-display text-base tracking-widest uppercase px-8 py-1.5 rounded-lg transition-all"
+              :class="activeFilter === filter.value
+                ? 'bg-white/10 backdrop-blur-sm text-accent border border-white/15'
+                : 'text-white/60 hover:text-white border border-transparent'"
+              @click="activeFilter = filter.value"
+            >
+              {{ filter.label }}
+            </button>
+          </div>
         </div>
 
         <!-- Grid -->
