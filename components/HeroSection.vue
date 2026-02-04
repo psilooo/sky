@@ -27,7 +27,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="relative h-screen overflow-hidden flex items-center justify-center">
+  <section class="relative h-screen flex items-center justify-center">
     <div ref="heroRef" class="absolute inset-0 opacity-60" style="mask-image: linear-gradient(to bottom, black 0%, transparent 80%); -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 80%)">
       <!-- Video on desktop -->
       <video
