@@ -39,7 +39,8 @@ onMounted(() => {
       expandedId.value = initialEvent
       const el = document.getElementById(`event-${initialEvent}`)
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        const y = el.getBoundingClientRect().top + window.scrollY - 80
+        gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 1.5, ease: 'power2.inOut' })
       }
     })
   }
