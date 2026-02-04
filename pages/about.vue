@@ -17,22 +17,13 @@ useScrollReveal(storyRef)
 
 <template>
   <div>
-    <!-- Hero -->
-    <section class="relative h-[60vh] flex items-center justify-center overflow-hidden">
-      <img
-        v-if="settings?.aboutHeroImage"
-        :src="imageUrl(settings.aboutHeroImage)"
-        alt=""
-        class="absolute inset-0 w-full h-full object-cover"
-      />
-      <div class="relative z-10 text-center">
-        <PageHeader title="ABOUT" />
-        <p v-if="settings?.aboutTagline" class="text-xl text-white/60 mt-2 px-6">{{ settings.aboutTagline }}</p>
-      </div>
-    </section>
+    <PageHeader title="ABOUT" />
+    <div class="-mt-6 text-center">
+      <p v-if="settings?.aboutTagline" class="text-xl text-white/60 px-6">{{ settings.aboutTagline }}</p>
+    </div>
 
     <!-- Story -->
-    <section class="pt-4 pb-24 px-6">
+    <section class="pt-3 pb-24 px-6">
       <div ref="storyRef" class="max-w-3xl mx-auto prose prose-invert prose-lg">
         <SanityContent v-if="settings?.aboutStory" :blocks="settings.aboutStory" />
       </div>
