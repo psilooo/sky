@@ -8,11 +8,10 @@ import { MeshGradient } from '@mesh-gradient/vue'
       class="gradient-bg"
       aria-hidden="true"
       :options="{
-        colors: ['#121212', '#00e5ff', '#121212', '#00e5ff'],
-        activeColors: { 1: true, 2: true, 3: false, 4: false },
+        colors: ['#121212', '#00E5FF', '#00555F', '#003238'],
         seed: 42,
         animationSpeed: 0.4,
-        frequency: { x: 0.00012, y: 0.00022, delta: 0.00008 },
+        frequency: { x: 0.00006, y: 0.00012, delta: 0.00004 },
       }"
     />
   </ClientOnly>
