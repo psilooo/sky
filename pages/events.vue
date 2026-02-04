@@ -15,6 +15,7 @@ const { data: events } = await useSanityQuery(query)
 const { imageUrl } = useR2Image()
 
 const route = useRoute()
+const router = useRouter()
 
 const initialTab = route.query.tab === 'recent' ? 'recent' : 'upcoming'
 const initialEvent = typeof route.query.event === 'string' ? route.query.event : null
@@ -136,7 +137,7 @@ function animateOpen(el: HTMLElement) {
         const rect = el.getBoundingClientRect()
         if (rect.bottom > window.innerHeight || rect.top < 0) {
           const y = rect.top + window.scrollY - 100
-          gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 0.8, ease: 'power2.inOut' })
+          gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 0.3, ease: 'power2.out' })
         }
       },
     }
@@ -157,8 +158,10 @@ onMounted(() => {
           gsap.set(el, { height: 'auto', opacity: 1 })
           const rect = el.getBoundingClientRect()
           const y = rect.top + window.scrollY - 100
-          gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 1.5, ease: 'power2.inOut' })
+          gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 0.4, ease: 'power2.out' })
         }
+        // Clear query params so refresh doesn't re-open this event
+        router.replace({ query: {} })
       })
     })
   }
