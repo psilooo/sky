@@ -27,7 +27,7 @@ useScrollReveal(storyRef)
       />
       <div class="relative z-10 text-center">
         <PageHeader title="ABOUT" />
-        <p class="text-xl text-white/60 mt-2 px-6">Where Sound Becomes Energy.</p>
+        <p v-if="settings?.aboutTagline" class="text-xl text-white/60 mt-2 px-6">{{ settings.aboutTagline }}</p>
       </div>
     </section>
 
