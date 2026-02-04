@@ -10,4 +10,4 @@ bucket_name = "skyeventsasia"
 #   API_KEY - Bearer token for authenticating upload/list/delete requests
 
 [vars]
-PUBLIC_BUCKET_URL = "https://media.skyeventsasia.com"
+PUBLIC_BUCKET_URL = "https://pub-df7b858a029a4ffe9e251cd85ad89447.r2.dev"

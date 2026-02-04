@@ -12,7 +12,7 @@ export function useSanityClient() {
     projectId,
     dataset,
     apiVersion,
-    useCdn: true,
+    useCdn: false,
   })
 }
 
