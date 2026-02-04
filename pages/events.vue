@@ -138,13 +138,20 @@ function toggleEvent(id: string) {
       expandedId.value = null
     }
   } else {
-    // Opening fresh
+    // Opening fresh — expand first, then scroll into view
     expandedId.value = newId
     nextTick(() => {
       const rowIdx = expandedRowIndex()
       const el = detailRefs.value[rowIdx]
       if (el) {
-        scrollThenExpand(el)
+        animateOpen(el, () => {
+          const y = el.getBoundingClientRect().top + window.scrollY - 60
+          gsap.to(window, {
+            scrollTo: { y, autoKill: false },
+            duration: 0.5,
+            ease: 'power2.inOut',
+          })
+        })
       }
     })
   }
