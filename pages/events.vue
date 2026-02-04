@@ -60,28 +60,46 @@ function setDetailRef(rowIdx: number, el: any) {
 
 let currentAnimation: gsap.core.Tween | null = null
 
+function scrollToCard(id: string) {
+  const cardEl = document.getElementById(`event-${id}`)
+  if (cardEl) {
+    const y = cardEl.getBoundingClientRect().top + window.scrollY - 30
+    gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 0.4, ease: 'power2.out' })
+  }
+}
+
 function toggleEvent(id: string) {
   const wasExpanded = expandedId.value
   const newId = wasExpanded === id ? null : id
 
   if (wasExpanded && wasExpanded !== id) {
-    // Switching: close old instantly, open new immediately
+    // Switching: close current, then open new
     const oldRowIdx = expandedRowIndex()
     const oldEl = detailRefs.value[oldRowIdx]
-    currentAnimation?.kill()
     if (oldEl) {
-      gsap.set(oldEl, { height: 0, opacity: 0 })
-    }
-    expandedId.value = newId
-    nextTick(() => {
-      nextTick(() => {
-        const newRowIdx = expandedRowIndex()
-        const newEl = detailRefs.value[newRowIdx]
-        if (newEl) {
-          animateOpen(newEl)
-        }
+      currentAnimation?.kill()
+      currentAnimation = gsap.to(oldEl, {
+        height: 0,
+        opacity: 0,
+        duration: 0.3,
+        ease: 'power2.in',
+        onComplete() {
+          expandedId.value = newId
+          nextTick(() => {
+            nextTick(() => {
+              const newRowIdx = expandedRowIndex()
+              const newEl = detailRefs.value[newRowIdx]
+              if (newEl) {
+                animateOpen(newEl)
+              }
+              scrollToCard(id)
+            })
+          })
+        },
       })
-    })
+    } else {
+      expandedId.value = newId
+    }
   } else if (wasExpanded === id) {
     // Collapsing current
     const rowIdx = expandedRowIndex()
@@ -102,6 +120,7 @@ function toggleEvent(id: string) {
     }
   } else {
     // Opening fresh
+    scrollToCard(id)
     expandedId.value = newId
     nextTick(() => {
       const rowIdx = expandedRowIndex()
@@ -115,16 +134,13 @@ function toggleEvent(id: string) {
 
 function animateOpen(el: HTMLElement) {
   currentAnimation?.kill()
-  // Scroll to the panel immediately as it starts expanding
-  const y = el.getBoundingClientRect().top + window.scrollY - 100
-  gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 0.4, ease: 'power2.out' })
   currentAnimation = gsap.fromTo(
     el,
     { height: 0, opacity: 0 },
     {
       height: 'auto',
       opacity: 1,
-      duration: 0.6,
+      duration: 0.5,
       ease: 'power2.out',
     }
   )
