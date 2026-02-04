@@ -261,7 +261,7 @@ onUnmounted(() => {
                       <!-- Event info -->
                       <div>
                         <h3 class="font-display text-3xl md:text-5xl tracking-wider">{{ expandedEvent.title }}</h3>
-                        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-3 text-white/60">
+                        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-3 text-white">
                           <span><span class="text-white/40 font-display tracking-wider text-sm">DATE:</span> {{ new Date(expandedEvent.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) }}</span>
                           <span v-if="expandedEvent.location"><span class="text-white/40 font-display tracking-wider text-sm">LOCATION:</span> {{ expandedEvent.location }}</span>
                           <span v-if="expandedEvent.venue"><span class="text-white/40 font-display tracking-wider text-sm">VENUE:</span> <span class="text-accent">{{ expandedEvent.venue }}</span></span>
