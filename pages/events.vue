@@ -124,6 +124,9 @@ function toggleEvent(id: string) {
 
 function animateOpen(el: HTMLElement) {
   currentAnimation?.kill()
+  // Scroll to the panel immediately as it starts expanding
+  const y = el.getBoundingClientRect().top + window.scrollY - 100
+  gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 0.4, ease: 'power2.out' })
   currentAnimation = gsap.fromTo(
     el,
     { height: 0, opacity: 0 },
@@ -132,14 +135,6 @@ function animateOpen(el: HTMLElement) {
       opacity: 1,
       duration: 0.6,
       ease: 'power2.out',
-      onComplete() {
-        // Scroll into view if needed
-        const rect = el.getBoundingClientRect()
-        if (rect.bottom > window.innerHeight || rect.top < 0) {
-          const y = rect.top + window.scrollY - 100
-          gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 0.3, ease: 'power2.out' })
-        }
-      },
     }
   )
 }
