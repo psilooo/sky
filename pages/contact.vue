@@ -39,7 +39,7 @@ const platformLabels: Record<string, string> = {
             :href="social.url"
             target="_blank"
             rel="noopener noreferrer"
-            class="font-display text-lg tracking-widest uppercase px-6 py-3 border border-white/10 rounded-lg
+            class="font-display text-lg tracking-widest uppercase px-6 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg
                    hover:border-accent hover:text-accent hover:shadow-[0_0_20px_rgba(0,229,255,0.15)]
                    transition-all duration-300"
           >
@@ -47,19 +47,6 @@ const platformLabels: Record<string, string> = {
           </a>
         </div>
 
-        <!-- Direct contact -->
-        <div class="space-y-4 text-white/60">
-          <p v-if="settings?.contactEmail">
-            <a :href="`mailto:${settings.contactEmail}`" class="text-lg hover:text-accent transition-colors">
-              {{ settings.contactEmail }}
-            </a>
-          </p>
-          <p v-if="settings?.contactPhone">
-            <a :href="`tel:${settings.contactPhone}`" class="text-lg hover:text-accent transition-colors">
-              {{ settings.contactPhone }}
-            </a>
-          </p>
-        </div>
       </div>
     </section>
   </div>
