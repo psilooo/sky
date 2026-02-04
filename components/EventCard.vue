@@ -19,10 +19,7 @@ const { imageUrl } = useR2Image()
         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
       <!-- Hover overlay: gradient + text -->
-      <div
-        class="absolute inset-0 bg-gradient-to-t from-black/40 via-white/5 to-transparent backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        style="-webkit-mask-image: linear-gradient(to top, black 0%, transparent 60%); mask-image: linear-gradient(to top, black 0%, transparent 60%)"
-      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-white/5 to-transparent backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       <div class="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <h3 class="font-display text-xl md:text-2xl tracking-wider leading-tight">{{ event.title }}</h3>
         <p class="text-white/60 text-sm mt-1">
