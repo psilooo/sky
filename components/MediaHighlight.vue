@@ -31,7 +31,7 @@ useStaggerReveal(containerRef, '.media-item')
           <div v-else class="w-full h-full bg-dark-card flex items-center justify-center">
             <span class="text-white/20 font-display text-lg">{{ item.title }}</span>
           </div>
-          <div class="absolute inset-0 bg-white/5 backdrop-blur-sm border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <div class="absolute inset-0 bg-white/10 backdrop-blur-[2px] border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
             <span v-if="item.mediaType === 'video'" class="text-4xl">▶</span>
           </div>
         </NuxtLink>

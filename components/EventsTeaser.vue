@@ -45,7 +45,7 @@ onMounted(() => {
               :alt="event.title"
               class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
-            <div class="absolute inset-0 bg-white/5 backdrop-blur-sm border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div class="absolute inset-0 bg-white/10 backdrop-blur-[2px] border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <div class="absolute bottom-0 left-0 right-0 p-6">
               <h3 class="font-display text-3xl md:text-4xl tracking-wider">{{ event.title }}</h3>
               <div class="flex items-center gap-4 mt-2 text-white/60">
