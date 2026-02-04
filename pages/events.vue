@@ -206,12 +206,12 @@ onUnmounted(() => {
     <section class="px-6 pb-24">
       <div class="max-w-5xl mx-auto">
         <!-- Tabs -->
-        <div class="flex gap-4 mb-12">
+        <div class="inline-flex gap-2 mb-12 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-2">
           <button
             v-for="tab in (['upcoming', 'recent'] as const)"
             :key="tab"
-            class="font-display text-sm tracking-widest uppercase px-4 py-2 rounded transition-colors"
-            :class="activeTab === tab ? 'bg-accent text-dark' : 'text-white/60 hover:text-white'"
+            class="font-display text-sm tracking-widest uppercase px-5 py-2 rounded-lg transition-all"
+            :class="activeTab === tab ? 'bg-white/10 backdrop-blur-sm text-accent border border-white/15' : 'text-white/60 hover:text-white border border-transparent'"
             @click="currentAnimation?.kill(); currentAnimation = null; expandedId = null; activeTab = tab"
           >
             {{ tab }}
