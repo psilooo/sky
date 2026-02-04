@@ -20,7 +20,7 @@ const { imageUrl } = useR2Image()
       />
       <!-- Hover overlay: gradient + text -->
       <div class="absolute inset-0 bg-white/10 backdrop-blur-[2px] border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      <div class="absolute inset-0 flex flex-col items-center justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+      <div class="absolute inset-0 flex flex-col items-center justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
         <h3 class="font-display text-xl md:text-2xl tracking-wider leading-tight text-center">{{ event.title }}</h3>
         <p class="text-white/60 text-sm mt-1">
           {{ new Date(event.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) }}
