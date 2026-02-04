@@ -28,7 +28,7 @@ onMounted(() => {
 
 <template>
   <section class="relative h-screen flex items-center justify-center">
-    <div ref="heroRef" class="absolute inset-0 opacity-60" style="mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 80%); -webkit-mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 80%)">
+    <div ref="heroRef" class="absolute inset-0 opacity-60" style="mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 90%); -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 90%)">
       <!-- Video on desktop -->
       <video
         v-if="settings?.heroVideoUrl"
