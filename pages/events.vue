@@ -247,7 +247,7 @@ onUnmounted(() => {
                   :ref="(el) => setDetailRef(rowIdx, el)"
                   class="col-span-1 md:col-span-3 overflow-hidden h-0 opacity-0"
                 >
-                  <div class="rounded-lg border border-accent/30 bg-dark-lighter shadow-[0_0_40px_rgba(0,229,255,0.08)]">
+                  <div class="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
                     <!-- Featured image banner -->
                     <div v-if="expandedEvent.featuredImage" class="relative aspect-[1708/750] overflow-hidden rounded-t-lg">
                       <img
