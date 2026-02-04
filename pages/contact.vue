@@ -40,7 +40,7 @@ const platformLabels: Record<string, string> = {
             target="_blank"
             rel="noopener noreferrer"
             class="font-display text-lg tracking-widest uppercase px-6 py-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg
-                   hover:border-accent hover:text-accent hover:shadow-[0_0_20px_rgba(0,229,255,0.15)]
+                   hover:border-accent hover:shadow-[0_0_20px_rgba(0,229,255,0.15)]
                    transition-all duration-300"
           >
             {{ platformLabels[social.platform] || social.platform }}
