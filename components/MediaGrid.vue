@@ -31,7 +31,7 @@ function getSize(item: any, index: number): string {
       <div v-else class="w-full h-full bg-dark-card flex items-center justify-center">
         <span class="text-white/20 font-display text-sm">{{ item.title }}</span>
       </div>
-      <div class="absolute inset-0 bg-white/0 group-hover:bg-white/5 group-hover:backdrop-blur-md group-hover:border group-hover:border-white/10 transition-all flex items-center justify-center">
+      <div class="absolute inset-0 bg-white/0 group-hover:bg-white/5 group-hover:backdrop-blur-sm group-hover:border group-hover:border-white/10 transition-all flex items-center justify-center">
         <span v-if="item.mediaType === 'video'" class="text-4xl opacity-70 group-hover:opacity-100 transition-opacity">&#9654;</span>
       </div>
       <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
