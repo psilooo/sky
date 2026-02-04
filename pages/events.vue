@@ -37,14 +37,10 @@ onMounted(() => {
   if (initialEvent) {
     nextTick(() => {
       expandedId.value = initialEvent
-      // Wait for GSAP expand animation (500ms) + page settle before scrolling
-      setTimeout(() => {
-        const el = document.getElementById(`event-${initialEvent}`)
-        if (el) {
-          const y = el.getBoundingClientRect().top + window.scrollY - 80
-          gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 2, ease: 'power2.inOut' })
-        }
-      }, 550)
+      const el = document.getElementById(`event-${initialEvent}`)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
     })
   }
 })
