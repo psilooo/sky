@@ -29,7 +29,7 @@ onMounted(() => {
 <template>
   <section class="relative h-screen flex items-center justify-center">
     <!-- Dark gradient behind video, same fade pattern -->
-    <div class="absolute inset-0" style="background: linear-gradient(to bottom, black 0%, black 60%, transparent 90%)"></div>
+    <div class="absolute top-0 left-0 right-0 h-[130vh] pointer-events-none" style="background: linear-gradient(to bottom, black 0%, black 50%, transparent 90%)"></div>
     <div ref="heroRef" class="absolute inset-0 opacity-60" style="mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 90%); -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 90%)">
       <!-- Video on desktop -->
       <video
