@@ -24,7 +24,7 @@ useScrollReveal(storyRef)
 
     <!-- Story -->
     <section class="pt-6 pb-24 px-6">
-      <div ref="storyRef" class="max-w-3xl mx-auto prose prose-invert prose-lg">
+      <div ref="storyRef" class="max-w-3xl mx-auto prose prose-invert prose-lg bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-8 md:p-12">
         <SanityContent v-if="settings?.aboutStory" :blocks="settings.aboutStory" />
       </div>
     </section>
