@@ -89,11 +89,12 @@ function openLightbox(index: number) {
       <div class="max-w-7xl mx-auto">
         <!-- Filter bar -->
         <div class="flex justify-center mb-12">
-          <div class="inline-flex gap-2 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-1.5 overflow-x-auto">
+          <div role="group" aria-label="Filter media by type" class="inline-flex gap-2 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-1.5 overflow-x-auto">
             <button
               v-for="filter in filters"
               :key="filter.value"
-              class="font-display text-base tracking-widest uppercase px-8 py-1.5 rounded-lg transition-all flex-shrink-0 text-center whitespace-nowrap"
+              :aria-pressed="activeFilter === filter.value"
+              class="font-display text-base tracking-widest uppercase px-6 sm:px-8 py-2.5 rounded-lg transition-[background-color,color,border-color] duration-200 flex-shrink-0 text-center whitespace-nowrap min-h-[44px]"
               :class="activeFilter === filter.value
                 ? 'bg-white/10 backdrop-blur-sm text-accent border border-white/15'
                 : 'text-white/60 hover:text-white border border-transparent'"

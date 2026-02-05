@@ -9,7 +9,13 @@ const heroRef = ref<HTMLElement | null>(null)
 const taglineRef = ref<HTMLElement | null>(null)
 const scrollIndicator = ref<HTMLElement | null>(null)
 
+const reducedMotion = ref(false)
+
 onMounted(() => {
+  reducedMotion.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  if (reducedMotion.value) return
+
   if (taglineRef.value) {
     gsap.from(taglineRef.value, { opacity: 0, y: 30, duration: 1.5, delay: 0.5, ease: 'power3.out' })
   }
@@ -49,20 +55,22 @@ onMounted(() => {
         v-if="settings?.heroFallbackImage"
         :src="imageUrl(settings.heroFallbackImage)"
         alt=""
+        fetchpriority="high"
         class="w-full h-full object-cover"
         :class="settings?.heroVideoUrl ? 'md:hidden' : ''"
+        @error="($event.target as HTMLImageElement).style.display = 'none'"
       />
     </div>
     <!-- Logo -->
     <div ref="taglineRef" class="relative z-10">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="-57 0 445.613 334.189" class="w-64 md:w-96 lg:w-[500px] fill-white">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="-57 0 445.613 334.189" class="w-64 md:w-96 lg:w-[500px] fill-white" role="img" aria-label="SKY Events Asia logo">
         <path d="M360.522,193.273c15.151-.49,28.173,12.558,28.091,28.166-.083,15.78-12.661,27.941-28.515,28.129-14.945.178-28.331-13.022-28.064-28.822.229-13.573,12.21-28.226,28.489-27.473Z"/>
         <text font-family="Anton-Regular, Anton" font-size="266.208" letter-spacing="-.054em" transform="translate(0 247.49)"><tspan x="0" y="0">SEA</tspan></text>
         <text font-family="Anton-Regular, Anton" font-size="60.49" letter-spacing="-.054em" transform="translate(5.46 311.578)"><tspan x="0" y="0">SKY EVENTS ASIA</tspan></text>
       </svg>
     </div>
     <!-- Scroll indicator -->
-    <div ref="scrollIndicator" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-accent drop-shadow-[0_0_6px_rgba(0,229,255,0.5)]">
+    <div ref="scrollIndicator" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-accent drop-shadow-[0_0_6px_rgba(0,229,255,0.5)]" aria-hidden="true">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7" />
       </svg>

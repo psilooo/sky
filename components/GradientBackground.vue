@@ -23,7 +23,7 @@ import { MeshGradient } from '@mesh-gradient/vue'
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
 }
 </style>

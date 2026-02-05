@@ -13,10 +13,13 @@ const { data: events } = await useSanityQuery(query)
 const { imageUrl } = useR2Image()
 
 const containerRef = ref<HTMLElement | null>(null)
+let tween: gsap.core.Tween | undefined
+
 onMounted(() => {
   if (!containerRef.value) return
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
   const children = containerRef.value.querySelectorAll('.event-card')
-  gsap.from(children, {
+  tween = gsap.from(children, {
     y: 60,
     opacity: 0,
     duration: 0.8,
@@ -24,6 +27,10 @@ onMounted(() => {
     ease: 'power3.out',
     onComplete() { gsap.set(children, { clearProps: 'all' }) },
   })
+})
+
+onUnmounted(() => {
+  tween?.kill()
 })
 </script>
 
@@ -36,14 +43,16 @@ onMounted(() => {
           v-for="event in events"
           :key="event._id"
           :to="`/events?tab=${type}&event=${event._id}`"
-          class="event-card group block relative overflow-hidden rounded-lg border border-white/5 hover:border-accent/30 transition-all duration-300 cursor-pointer"
+          class="event-card group block relative overflow-hidden rounded-lg border border-white/5 hover:border-accent/30 transition-colors duration-300 cursor-pointer"
         >
-          <div class="relative aspect-[1708/750] overflow-hidden">
+          <div class="relative aspect-[1708/750] overflow-hidden bg-dark-lighter">
             <img
               v-if="event.featuredImage"
               :src="imageUrl(event.featuredImage)"
               :alt="event.title"
               class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+              @error="($event.target as HTMLImageElement).style.display = 'none'"
             />
             <div class="absolute inset-0 bg-white/10 backdrop-blur-[2px] border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <div class="absolute bottom-0 left-0 right-0 p-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">

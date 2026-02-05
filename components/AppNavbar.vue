@@ -23,7 +23,8 @@ watch(() => route.path, () => { mobileMenuOpen.value = false })
 
 <template>
   <nav
-    class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4"
+    aria-label="Main navigation"
+    class="fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 px-6 py-4"
     :class="scrolled ? 'bg-white/5 backdrop-blur-md border-b border-white/10' : 'bg-transparent border-b border-transparent'"
   >
     <div class="max-w-7xl mx-auto">
@@ -42,8 +43,9 @@ watch(() => route.path, () => { mobileMenuOpen.value = false })
       <!-- Mobile hamburger -->
       <div class="md:hidden flex justify-center">
         <button
-          class="text-white"
+          class="text-white p-2 -m-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
           @click="mobileMenuOpen = !mobileMenuOpen"
+          :aria-expanded="mobileMenuOpen"
           aria-label="Toggle menu"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

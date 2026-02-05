@@ -60,7 +60,17 @@ function setDetailRef(rowIdx: number, el: any) {
 
 let currentAnimation: gsap.core.Tween | null = null
 
+function isReducedMotion(): boolean {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
 function scrollThenExpand(el: HTMLElement, onDone?: () => void) {
+  if (isReducedMotion()) {
+    gsap.set(el, { height: 'auto', opacity: 1 })
+    el.scrollIntoView({ block: 'nearest' })
+    onDone?.()
+    return
+  }
   const y = el.getBoundingClientRect().top + window.scrollY - 60
   const distance = Math.abs(y - window.scrollY)
   if (distance < 10) {
@@ -83,6 +93,27 @@ function scrollThenExpand(el: HTMLElement, onDone?: () => void) {
 function toggleEvent(id: string) {
   const wasExpanded = expandedId.value
   const newId = wasExpanded === id ? null : id
+
+  // Reduced motion: instant show/hide without animation
+  if (isReducedMotion()) {
+    if (wasExpanded) {
+      const oldRowIdx = expandedRowIndex()
+      const oldEl = detailRefs.value[oldRowIdx]
+      if (oldEl) gsap.set(oldEl, { height: 0, opacity: 0 })
+    }
+    expandedId.value = newId
+    if (newId) {
+      nextTick(() => {
+        const rowIdx = expandedRowIndex()
+        const el = detailRefs.value[rowIdx]
+        if (el) {
+          gsap.set(el, { height: 'auto', opacity: 1 })
+          el.scrollIntoView({ block: 'nearest' })
+        }
+      })
+    }
+    return
+  }
 
   if (wasExpanded && wasExpanded !== id) {
     // Switching: lock page height so closing the old panel doesn't yank the viewport
@@ -216,10 +247,28 @@ function onLightboxKey(e: KeyboardEvent) {
 watch(lightboxOpen, (open) => {
   if (open) {
     window.addEventListener('keydown', onLightboxKey)
+    document.body.style.overflow = 'hidden'
   } else {
     window.removeEventListener('keydown', onLightboxKey)
+    document.body.style.overflow = ''
   }
 })
+
+// Touch/swipe support for lightbox on mobile
+let lbTouchStartX = 0
+let lbTouchStartY = 0
+function onLbTouchStart(e: TouchEvent) {
+  lbTouchStartX = e.touches[0].clientX
+  lbTouchStartY = e.touches[0].clientY
+}
+function onLbTouchEnd(e: TouchEvent) {
+  const deltaX = e.changedTouches[0].clientX - lbTouchStartX
+  const deltaY = e.changedTouches[0].clientY - lbTouchStartY
+  if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+    if (deltaX > 0) lightboxPrev()
+    else lightboxNext()
+  }
+}
 
 const listRef = ref<HTMLElement | null>(null)
 useStaggerReveal(listRef, '.event-item')
@@ -233,8 +282,12 @@ onMounted(() => {
         const el = detailRefs.value[rowIdx]
         if (el) {
           gsap.set(el, { height: 'auto', opacity: 1 })
-          const y = el.getBoundingClientRect().top + window.scrollY - 60
-          gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 0.5, ease: 'power2.inOut' })
+          if (isReducedMotion()) {
+            el.scrollIntoView({ block: 'nearest' })
+          } else {
+            const y = el.getBoundingClientRect().top + window.scrollY - 60
+            gsap.to(window, { scrollTo: { y, autoKill: false }, duration: 0.5, ease: 'power2.inOut' })
+          }
         }
         // Clear query params so refresh doesn't re-open this event
         router.replace({ query: {} })
@@ -245,6 +298,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   currentAnimation?.kill()
+  window.removeEventListener('keydown', onLightboxKey)
+  document.body.style.overflow = ''
 })
 </script>
 
@@ -255,14 +310,18 @@ onUnmounted(() => {
       <div class="max-w-5xl mx-auto">
         <!-- Tabs -->
         <div class="flex justify-center mb-12">
-          <div class="inline-flex gap-2 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-1.5">
+          <div role="tablist" aria-label="Event categories" class="inline-flex gap-2 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-1.5">
             <button
               v-for="tab in (['upcoming', 'recent'] as const)"
               :key="tab"
-              class="font-display text-base tracking-widest uppercase px-8 py-1.5 rounded-lg transition-all"
+              role="tab"
+              :id="`tab-${tab}`"
+              :aria-selected="activeTab === tab"
+              :aria-controls="`tabpanel-${tab}`"
+              class="font-display text-base tracking-widest uppercase px-6 sm:px-8 py-2.5 rounded-lg transition-[background-color,color,border-color] duration-200 min-h-[44px]"
               :class="activeTab === tab ? 'bg-white/10 backdrop-blur-sm text-accent border border-white/15' : 'text-white/60 hover:text-white border border-transparent'"
-            @click="currentAnimation?.kill(); currentAnimation = null; expandedId = null; activeTab = tab"
-          >
+              @click="currentAnimation?.kill(); currentAnimation = null; expandedId = null; activeTab = tab"
+            >
               {{ tab }}
             </button>
           </div>
@@ -270,7 +329,7 @@ onUnmounted(() => {
 
         <!-- Events grid -->
         <Transition name="page" mode="out-in">
-          <div ref="listRef" :key="activeTab">
+          <div ref="listRef" :key="activeTab" role="tabpanel" :id="`tabpanel-${activeTab}`" :aria-labelledby="`tab-${activeTab}`">
             <div v-if="displayedEvents.length === 0" class="text-center py-16">
               <p class="text-white/40 text-lg">
                 {{ activeTab === 'upcoming' ? 'Stay tuned for upcoming events.' : 'No recent events yet.' }}
@@ -297,18 +356,20 @@ onUnmounted(() => {
                 >
                   <div class="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
                     <!-- Featured image banner -->
-                    <div v-if="expandedEvent.featuredImage" class="relative aspect-[1708/750] overflow-hidden rounded-t-lg">
+                    <div v-if="expandedEvent.featuredImage" class="relative aspect-[1708/750] overflow-hidden rounded-t-lg bg-dark-lighter">
                       <img
                         :src="imageUrl(expandedEvent.featuredImage)"
                         :alt="expandedEvent.title"
                         class="w-full h-full object-cover"
+                        loading="lazy"
+                        @error="($event.target as HTMLImageElement).style.display = 'none'"
                       />
                     </div>
 
                     <div class="p-6 md:p-8 space-y-6">
                       <!-- Event info -->
                       <div>
-                        <h3 class="font-display text-3xl md:text-5xl tracking-wider">{{ expandedEvent.title }}</h3>
+                        <h3 class="font-display text-3xl md:text-5xl tracking-wider break-words">{{ expandedEvent.title }}</h3>
                         <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-3 text-white">
                           <span><span class="text-white/40 font-display tracking-wider text-sm">DATE:</span> {{ new Date(expandedEvent.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) }}</span>
                           <span v-if="expandedEvent.location"><span class="text-white/40 font-display tracking-wider text-sm">LOCATION:</span> {{ expandedEvent.location }}</span>
@@ -338,8 +399,13 @@ onUnmounted(() => {
                           <!-- Video hero (self-hosted) -->
                           <div
                             v-if="expandedEvent.videoUrl && !(expandedEvent.videoUrl.includes('youtube') || expandedEvent.videoUrl.includes('youtu.be'))"
+                            role="button"
+                            tabindex="0"
+                            :aria-label="`Play ${expandedEvent.title} video`"
                             class="overflow-hidden rounded-lg col-span-2 md:row-span-2 relative cursor-pointer group"
                             @click="openLightbox(0)"
+                            @keydown.enter="openLightbox(0)"
+                            @keydown.space.prevent="openLightbox(0)"
                           >
                             <video
                               :src="expandedEvent.videoUrl"
@@ -359,6 +425,7 @@ onUnmounted(() => {
                           >
                             <iframe
                               :src="expandedEvent.videoUrl"
+                              :title="`${expandedEvent.title} video`"
                               class="w-full h-full"
                               allowfullscreen
                             />
@@ -367,21 +434,28 @@ onUnmounted(() => {
                           <div
                             v-for="(img, i) in expandedEvent.gallery?.slice(0, expandedEvent.videoUrl ? 4 : 5) || []"
                             :key="i"
+                            role="button"
+                            tabindex="0"
+                            :aria-label="`View ${expandedEvent.title} gallery image ${i + 1}`"
                             class="overflow-hidden rounded-lg group cursor-pointer"
                             :class="!expandedEvent.videoUrl && i === 0 ? 'col-span-2 md:row-span-2' : ''"
                             @click="openLightbox(expandedEvent.videoUrl && !(expandedEvent.videoUrl.includes('youtube') || expandedEvent.videoUrl.includes('youtu.be')) ? i + 1 : i)"
+                            @keydown.enter="openLightbox(expandedEvent.videoUrl && !(expandedEvent.videoUrl.includes('youtube') || expandedEvent.videoUrl.includes('youtu.be')) ? i + 1 : i)"
+                            @keydown.space.prevent="openLightbox(expandedEvent.videoUrl && !(expandedEvent.videoUrl.includes('youtube') || expandedEvent.videoUrl.includes('youtu.be')) ? i + 1 : i)"
                           >
                             <img
                               :src="imageUrl(img)"
                               :alt="`${expandedEvent.title} gallery ${i + 1}`"
                               class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              loading="lazy"
+                              @error="($event.target as HTMLImageElement).style.display = 'none'"
                             />
                           </div>
                         </div>
                         <NuxtLink
                           v-if="expandedEvent.gallery?.length > (expandedEvent.videoUrl ? 4 : 5)"
                           :to="`/media?event=${expandedEvent._id}`"
-                          class="inline-block mt-3 font-display text-sm tracking-widest uppercase text-white hover:text-accent transition-colors"
+                          class="inline-block mt-3 font-display text-sm tracking-widest uppercase text-white hover:text-accent transition-colors py-2 min-h-[44px]"
                         >
                           See More ({{ expandedEvent.gallery.length }} photos) &rarr;
                         </NuxtLink>
@@ -389,7 +463,7 @@ onUnmounted(() => {
 
                       <!-- Close button -->
                       <button
-                        class="font-display text-sm tracking-widest uppercase text-white/40 hover:text-accent transition-colors"
+                        class="font-display text-sm tracking-widest uppercase text-white/40 hover:text-accent transition-colors py-3 min-h-[44px]"
                         @click="toggleEvent(expandedEvent._id)"
                       >
                         Close
@@ -407,10 +481,10 @@ onUnmounted(() => {
     <!-- Gallery lightbox -->
     <Teleport to="body">
       <Transition name="lightbox">
-        <div v-if="lightboxOpen && lightboxItems.length" class="fixed inset-0 z-50 bg-dark/40 backdrop-blur-2xl flex items-center justify-center" @click.self="closeLightbox">
-          <button class="absolute top-6 right-6 text-white/60 hover:text-white text-2xl" @click="closeLightbox">&#10005;</button>
-          <button v-if="lightboxItems.length > 1" class="absolute left-6 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-3xl" @click="lightboxPrev">&#8249;</button>
-          <button v-if="lightboxItems.length > 1" class="absolute right-6 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-3xl" @click="lightboxNext">&#8250;</button>
+        <div v-if="lightboxOpen && lightboxItems.length" role="dialog" aria-modal="true" aria-label="Gallery lightbox" class="fixed inset-0 z-[70] bg-dark/40 backdrop-blur-2xl flex items-center justify-center" @click.self="closeLightbox" @touchstart.passive="onLbTouchStart" @touchend.passive="onLbTouchEnd">
+          <button aria-label="Close lightbox" class="absolute top-4 right-4 text-white/60 hover:text-white text-2xl min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors" @click="closeLightbox">&#10005;</button>
+          <button v-if="lightboxItems.length > 1" aria-label="Previous image" class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-3xl min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors" @click="lightboxPrev">&#8249;</button>
+          <button v-if="lightboxItems.length > 1" aria-label="Next image" class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-3xl min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors" @click="lightboxNext">&#8250;</button>
           <div class="max-w-5xl w-full mx-6 flex flex-col items-center">
             <video
               v-if="lightboxItems[lightboxIndex]?.type === 'video'"
@@ -418,6 +492,7 @@ onUnmounted(() => {
               :src="lightboxItems[lightboxIndex].src"
               controls
               autoplay
+              playsinline
               class="max-w-full max-h-[85vh] rounded-lg"
               style="box-shadow: 0 0 40px rgba(0, 229, 255, 0.08);"
             />

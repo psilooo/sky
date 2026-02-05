@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     },
   },
   googleFonts: {
+    display: 'swap',
     families: {
       'Anton': true,
       'Bebas Neue': true,
@@ -31,6 +32,7 @@ export default defineNuxtConfig({
       title: 'SKY Events Asia',
       meta: [
         { name: 'description', content: 'Electronic music festival production company in Asia' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
       ],
     },
     pageTransition: { name: 'page', mode: 'out-in' },

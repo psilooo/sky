@@ -5,5 +5,5 @@ defineProps<{ blocks: any[] }>()
 </script>
 
 <template>
-  <PortableText :value="blocks" />
+  <PortableText v-if="blocks?.length" :value="blocks" />
 </template>

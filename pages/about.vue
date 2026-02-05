@@ -19,13 +19,14 @@ useScrollReveal(storyRef)
   <div>
     <PageHeader title="ABOUT" />
     <div class="-mt-6 text-center">
-      <p v-if="settings?.aboutTagline" class="text-xl text-white/60 px-6">{{ settings.aboutTagline }}</p>
+      <p v-if="settings?.aboutTagline" class="text-xl text-white/60 px-6 leading-relaxed">{{ settings.aboutTagline }}</p>
     </div>
 
     <!-- Story -->
     <section class="pt-6 pb-24 px-6">
-      <div ref="storyRef" class="max-w-3xl mx-auto prose prose-invert prose-lg bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-8 md:p-12">
+      <div ref="storyRef" class="max-w-3xl mx-auto prose prose-invert prose-lg bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-5 sm:p-8 md:p-12">
         <SanityContent v-if="settings?.aboutStory" :blocks="settings.aboutStory" />
+        <p v-else class="text-white/40 text-center">Our story is coming soon.</p>
       </div>
     </section>
 

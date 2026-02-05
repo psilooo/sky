@@ -79,7 +79,7 @@ function resetForm() {
     <PageHeader title="CONTACT" />
     <section class="px-6 pb-24">
       <div ref="sectionRef" class="max-w-2xl mx-auto text-center">
-        <p v-if="settings?.contactTagline" class="text-xl text-white/60 mb-6">
+        <p v-if="settings?.contactTagline" class="text-xl text-white/60 mb-6 leading-relaxed">
           {{ settings.contactTagline }}
         </p>
 
@@ -88,21 +88,21 @@ function resetForm() {
       <!-- Contact Form -->
       <div ref="formRef" class="max-w-xl mx-auto">
         <!-- Success state -->
-        <div v-if="status === 'success'" class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 text-center">
+        <div v-if="status === 'success'" class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-5 sm:p-8 text-center">
           <p class="text-xl font-display tracking-wide text-accent mb-4">MESSAGE SENT</p>
           <p class="text-white/60 mb-6">Thanks for reaching out. We'll get back to you soon.</p>
           <button
             @click="resetForm"
             class="font-display text-sm tracking-widest uppercase px-6 py-3 border border-white/10 rounded-lg
                    hover:border-accent hover:shadow-[0_0_20px_rgba(0,229,255,0.15)]
-                   transition-all duration-300"
+                   transition-[border-color,box-shadow] duration-300"
           >
             Send Another Message
           </button>
         </div>
 
         <!-- Form -->
-        <form v-else @submit.prevent="handleSubmit" class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 space-y-6">
+        <form v-else @submit.prevent="handleSubmit" class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-5 sm:p-8 space-y-6">
           <div>
             <label for="name" class="block text-sm font-display tracking-widest uppercase text-white/80 mb-2">Name</label>
             <input
@@ -110,9 +110,9 @@ function resetForm() {
               v-model="form.name"
               type="text"
               autocomplete="name"
-              class="w-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg px-4 py-3 text-white
+              class="w-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg px-4 py-3 text-base text-white
                      focus:outline-none focus:border-accent focus:shadow-[0_0_12px_rgba(0,229,255,0.15)]
-                     transition-all duration-300 placeholder-white/20"
+                     transition-[border-color,box-shadow] duration-300 placeholder-white/20"
               placeholder="Your name"
             />
           </div>
@@ -124,9 +124,9 @@ function resetForm() {
               v-model="form.email"
               type="email"
               autocomplete="email"
-              class="w-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg px-4 py-3 text-white
+              class="w-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg px-4 py-3 text-base text-white
                      focus:outline-none focus:border-accent focus:shadow-[0_0_12px_rgba(0,229,255,0.15)]
-                     transition-all duration-300 placeholder-white/20"
+                     transition-[border-color,box-shadow] duration-300 placeholder-white/20"
               placeholder="your@email.com"
             />
           </div>
@@ -137,15 +137,15 @@ function resetForm() {
               id="message"
               v-model="form.message"
               rows="5"
-              class="w-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg px-4 py-3 text-white resize-none
+              class="w-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg px-4 py-3 text-base text-white resize-none
                      focus:outline-none focus:border-accent focus:shadow-[0_0_12px_rgba(0,229,255,0.15)]
-                     transition-all duration-300 placeholder-white/20"
+                     transition-[border-color,box-shadow] duration-300 placeholder-white/20"
               placeholder="What's on your mind?"
             />
           </div>
 
           <!-- Error message -->
-          <p v-if="status === 'error'" class="text-red-400 text-sm">
+          <p v-if="status === 'error'" role="alert" class="text-red-400 text-sm">
             {{ errorMessage }}
           </p>
 
@@ -156,7 +156,7 @@ function resetForm() {
                    bg-accent text-dark font-bold
                    hover:shadow-[0_0_24px_rgba(0,229,255,0.3)]
                    disabled:opacity-50 disabled:cursor-not-allowed
-                   transition-all duration-300"
+                   transition-[box-shadow,opacity] duration-300"
           >
             {{ status === 'sending' ? 'SENDING...' : 'SEND MESSAGE' }}
           </button>

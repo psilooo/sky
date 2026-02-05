@@ -8,20 +8,25 @@ const { imageUrl } = useR2Image()
 
 <template>
   <button
-    class="group relative w-full overflow-hidden rounded-lg border border-white/5 hover:border-accent/30 transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(0,229,255,0.08)] cursor-pointer"
+    class="group relative w-full overflow-hidden rounded-lg border border-white/5 hover:border-accent/30 transition-[border-color,transform,box-shadow] duration-500 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(0,229,255,0.08)] cursor-pointer"
     @click="emit('toggle', event._id)"
   >
-    <div class="relative aspect-[1349/1685] overflow-hidden">
+    <div class="relative aspect-[1349/1685] overflow-hidden bg-dark-lighter">
       <img
         v-if="event.poster || event.featuredImage"
         :src="imageUrl(event.poster || event.featuredImage)"
         :alt="event.title"
         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        loading="lazy"
+        @error="($event.target as HTMLImageElement).style.display = 'none'"
       />
+      <div v-if="!event.poster && !event.featuredImage" class="w-full h-full flex items-center justify-center">
+        <span class="text-white/10 font-display text-2xl tracking-wider text-center px-4">{{ event.title }}</span>
+      </div>
       <!-- Hover overlay: gradient + text -->
       <div class="absolute inset-0 bg-white/10 backdrop-blur-[2px] border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       <div class="absolute inset-0 flex flex-col items-center justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 drop-shadow-[0_2px_16px_rgba(0,0,0,1)] drop-shadow-[0_0_40px_rgba(0,0,0,0.6)]">
-        <h3 class="font-display text-xl md:text-2xl tracking-wider leading-tight text-center">{{ event.title }}</h3>
+        <h3 class="font-display text-xl md:text-2xl tracking-wider leading-tight text-center break-words">{{ event.title }}</h3>
         <p class="text-white text-sm mt-1">
           {{ new Date(event.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) }}
         </p>

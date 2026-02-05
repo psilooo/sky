@@ -14,26 +14,28 @@ const { data: settings } = await useSanityQuery(query)
           :href="social.url"
           target="_blank"
           rel="noopener noreferrer"
-          class="text-white/60 hover:text-accent transition-colors capitalize"
-          :aria-label="social.platform"
+          class="text-white/60 hover:text-accent transition-colors capitalize py-2 min-h-[44px] inline-flex items-center"
+          :aria-label="`${social.platform} (opens in new tab)`"
         >
           {{ social.platform }}
+          <span class="sr-only">(opens in new tab)</span>
         </a>
       </div>
-      <div class="flex items-center gap-4">
-        <a v-if="settings?.contactEmail" :href="`mailto:${settings.contactEmail}`" class="text-white/40 text-sm hover:text-accent transition-colors">
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <a v-if="settings?.contactEmail" :href="`mailto:${settings.contactEmail}`" class="text-white/40 text-sm hover:text-accent transition-colors py-2 min-h-[44px] inline-flex items-center break-all">
           {{ settings.contactEmail }}
         </a>
         <a
           href="https://www.instagram.com/skyeventsasia/"
           target="_blank"
           rel="noopener noreferrer"
-          class="font-display tracking-widest uppercase text-sm px-4 py-2 border border-accent/40 rounded-lg
+          class="font-display tracking-widest uppercase text-sm px-4 py-2.5 border border-accent/40 rounded-lg
                  text-accent hover:bg-accent/10 hover:shadow-[0_0_16px_rgba(0,229,255,0.15)]
-                 transition-all duration-300"
-          aria-label="Instagram"
+                 transition-[background-color,box-shadow] duration-300 min-h-[44px] inline-flex items-center"
+          aria-label="Instagram (opens in new tab)"
         >
           Instagram
+          <span class="sr-only">(opens in new tab)</span>
         </a>
       </div>
     </div>

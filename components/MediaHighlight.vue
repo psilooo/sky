@@ -27,9 +27,11 @@ useStaggerReveal(containerRef, '.media-item')
             :src="imageUrl(item.mediaType === 'photo' ? item.image : item.videoThumbnail)"
             :alt="item.caption || item.title"
             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+            @error="($event.target as HTMLImageElement).style.display = 'none'"
           />
-          <div v-else class="w-full h-full bg-dark-card flex items-center justify-center">
-            <span class="text-white/20 font-display text-lg">{{ item.title }}</span>
+          <div v-if="!item.image && !item.videoThumbnail" class="w-full h-full bg-dark-card flex items-center justify-center">
+            <span class="text-white/40 font-display text-lg">{{ item.title }}</span>
           </div>
           <div class="absolute inset-0 bg-white/10 backdrop-blur-[2px] border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
             <span v-if="item.mediaType === 'video'" class="text-4xl">▶</span>
@@ -37,7 +39,7 @@ useStaggerReveal(containerRef, '.media-item')
         </NuxtLink>
       </div>
       <div class="text-center mt-8">
-        <NuxtLink to="/media" class="font-display text-sm tracking-widest uppercase text-accent hover:text-white transition-colors">
+        <NuxtLink to="/media" class="font-display text-sm tracking-widest uppercase text-accent hover:text-white transition-colors py-3 inline-flex items-center min-h-[44px]">
           View All →
         </NuxtLink>
       </div>
