@@ -298,7 +298,7 @@ onUnmounted(() => {
                         <NuxtLink
                           v-if="expandedEvent.gallery.length > 3"
                           :to="`/media?event=${expandedEvent._id}`"
-                          class="inline-block mt-3 font-display text-sm tracking-widest uppercase text-accent hover:text-white transition-colors"
+                          class="inline-block mt-3 font-display text-sm tracking-widest uppercase text-white hover:text-accent transition-colors"
                         >
                           See More ({{ expandedEvent.gallery.length }} photos) &rarr;
                         </NuxtLink>
