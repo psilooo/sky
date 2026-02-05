@@ -173,6 +173,25 @@ function animateOpen(el: HTMLElement, onDone?: () => void) {
   )
 }
 
+const videoLightboxUrl = ref<string | null>(null)
+
+function openVideoLightbox(url: string) {
+  videoLightboxUrl.value = url
+}
+function closeVideoLightbox() {
+  videoLightboxUrl.value = null
+}
+function onVideoLightboxKey(e: KeyboardEvent) {
+  if (e.key === 'Escape') closeVideoLightbox()
+}
+watch(videoLightboxUrl, (url) => {
+  if (url) {
+    window.addEventListener('keydown', onVideoLightboxKey)
+  } else {
+    window.removeEventListener('keydown', onVideoLightboxKey)
+  }
+})
+
 const listRef = ref<HTMLElement | null>(null)
 useStaggerReveal(listRef, '.event-item')
 
@@ -286,23 +305,32 @@ onUnmounted(() => {
                       <!-- Gallery (video as hero item if present) -->
                       <div v-if="expandedEvent.gallery?.length || expandedEvent.videoUrl">
                         <h4 class="font-display text-xl tracking-wider mb-3">GALLERY</h4>
-                        <!-- Video -->
-                        <div v-if="expandedEvent.videoUrl" class="mb-2">
-                          <div
-                            v-if="expandedEvent.videoUrl.includes('youtube') || expandedEvent.videoUrl.includes('youtu.be')"
-                            class="aspect-video rounded-lg overflow-hidden"
-                          >
-                            <iframe
-                              :src="expandedEvent.videoUrl"
-                              class="w-full h-full"
-                              allowfullscreen
-                            />
-                          </div>
+                        <!-- Video preview -->
+                        <div
+                          v-if="expandedEvent.videoUrl && !(expandedEvent.videoUrl.includes('youtube') || expandedEvent.videoUrl.includes('youtu.be'))"
+                          class="mb-2 relative cursor-pointer group"
+                          @click="openVideoLightbox(expandedEvent.videoUrl)"
+                        >
                           <video
-                            v-else
                             :src="expandedEvent.videoUrl"
-                            controls
-                            class="max-w-full max-h-[85vh] mx-auto rounded-lg"
+                            preload="metadata"
+                            muted
+                            playsinline
+                            class="max-w-full max-h-[40vh] mx-auto rounded-lg"
+                          />
+                          <div class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors rounded-lg">
+                            <span class="text-5xl text-white/80 group-hover:text-white transition-colors">&#9654;</span>
+                          </div>
+                        </div>
+                        <!-- YouTube inline -->
+                        <div
+                          v-else-if="expandedEvent.videoUrl"
+                          class="mb-2 aspect-video rounded-lg overflow-hidden"
+                        >
+                          <iframe
+                            :src="expandedEvent.videoUrl"
+                            class="w-full h-full"
+                            allowfullscreen
                           />
                         </div>
                         <!-- Images grid -->
@@ -345,5 +373,29 @@ onUnmounted(() => {
         </Transition>
       </div>
     </section>
+
+    <!-- Video lightbox -->
+    <Teleport to="body">
+      <Transition name="lightbox">
+        <div v-if="videoLightboxUrl" class="fixed inset-0 z-50 bg-dark/40 backdrop-blur-2xl flex items-center justify-center" @click.self="closeVideoLightbox">
+          <button class="absolute top-6 right-6 text-white/60 hover:text-white text-2xl" @click="closeVideoLightbox">&#10005;</button>
+          <div class="max-w-5xl w-full mx-6 flex flex-col items-center">
+            <video
+              :key="videoLightboxUrl"
+              :src="videoLightboxUrl"
+              controls
+              autoplay
+              class="max-w-full max-h-[85vh] rounded-lg"
+              style="box-shadow: 0 0 40px rgba(0, 229, 255, 0.08);"
+            />
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
+
+<style scoped>
+.lightbox-enter-active, .lightbox-leave-active { transition: opacity 0.3s ease; }
+.lightbox-enter-from, .lightbox-leave-to { opacity: 0; }
+</style>
