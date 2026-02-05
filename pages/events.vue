@@ -314,7 +314,7 @@ onUnmounted(() => {
                         <h4 class="font-display text-xl tracking-wider mb-3">RECAP</h4>
                         <div
                           :class="[
-                            'rounded-lg overflow-hidden',
+                            'rounded-lg overflow-hidden max-h-[376px] md:max-h-[288px]',
                             (expandedEvent.videoUrl.includes('youtube') || expandedEvent.videoUrl.includes('youtu.be'))
                               ? 'aspect-video'
                               : ''
@@ -330,7 +330,7 @@ onUnmounted(() => {
                             v-else
                             :src="expandedEvent.videoUrl"
                             controls
-                            class="w-full rounded-lg bg-black"
+                            class="w-full max-h-[376px] md:max-h-[288px] rounded-lg bg-black"
                           />
                         </div>
                       </div>
