@@ -34,7 +34,7 @@ function getSize(item: any, index: number): string {
         preload="metadata"
         muted
         playsinline
-        class="w-full h-full object-cover"
+        class="w-full h-full object-contain"
       />
       <div v-else class="w-full h-full bg-dark-lighter flex items-center justify-center">
         <span class="text-white/20 font-display text-sm">{{ item.title }}</span>
