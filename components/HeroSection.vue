@@ -10,8 +10,17 @@ const taglineRef = ref<HTMLElement | null>(null)
 const scrollIndicator = ref<HTMLElement | null>(null)
 
 const reducedMotion = ref(false)
+const fontReady = ref(false)
 
-onMounted(() => {
+onMounted(async () => {
+  // Wait for Anton font before showing SVG to prevent FOUT flash
+  try {
+    await document.fonts.load('1em Anton')
+    fontReady.value = true
+  } catch {
+    fontReady.value = true // Show anyway if font API fails
+  }
+
   reducedMotion.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   if (reducedMotion.value) return
@@ -37,7 +46,7 @@ onMounted(() => {
     <!-- Dark gradient behind video, same fade pattern -->
     <div class="absolute top-0 left-0 right-0 h-[130vh] pointer-events-none" style="background: linear-gradient(to bottom, black 0%, black 50%, transparent 90%)"></div>
     <div ref="heroRef" class="absolute inset-0 opacity-60" style="mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 90%); -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 90%)">
-      <!-- Video on desktop -->
+      <!-- Video background -->
       <video
         v-if="settings?.heroVideoUrl"
         autoplay
@@ -46,24 +55,23 @@ onMounted(() => {
         playsinline
         poster="/hero-poster.jpg"
         preload="metadata"
-        class="hidden md:block w-full h-full object-cover"
+        class="w-full h-full object-cover"
       >
         <source :src="settings.heroVideoUrl" type="video/mp4" />
       </video>
-      <!-- Fallback image (shown on mobile, or when no video) -->
+      <!-- Fallback image (only when no video URL) -->
       <img
-        v-if="settings?.heroFallbackImage"
+        v-else-if="settings?.heroFallbackImage"
         :src="imageUrl(settings.heroFallbackImage)"
         alt=""
         fetchpriority="high"
         class="w-full h-full object-cover"
-        :class="settings?.heroVideoUrl ? 'md:hidden' : ''"
         @error="($event.target as HTMLImageElement).style.display = 'none'"
       />
     </div>
     <!-- Logo -->
     <div ref="taglineRef" class="relative z-10">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="-57 0 445.613 334.189" class="w-64 md:w-96 lg:w-[500px] fill-white" role="img" aria-label="SKY Events Asia logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="-57 0 445.613 334.189" class="w-64 md:w-96 lg:w-[500px] fill-white transition-opacity duration-300" :class="fontReady ? 'opacity-100' : 'opacity-0'" role="img" aria-label="SKY Events Asia logo">
         <path d="M360.522,193.273c15.151-.49,28.173,12.558,28.091,28.166-.083,15.78-12.661,27.941-28.515,28.129-14.945.178-28.331-13.022-28.064-28.822.229-13.573,12.21-28.226,28.489-27.473Z"/>
         <text font-family="Anton-Regular, Anton" font-size="266.208" letter-spacing="-.054em" transform="translate(0 247.49)"><tspan x="0" y="0">SEA</tspan></text>
         <text font-family="Anton-Regular, Anton" font-size="60.49" letter-spacing="-.054em" transform="translate(5.46 311.578)"><tspan x="0" y="0">SKY EVENTS ASIA</tspan></text>

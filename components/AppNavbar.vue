@@ -41,7 +41,7 @@ watch(() => route.path, () => { mobileMenuOpen.value = false })
         </NuxtLink>
       </div>
       <!-- Mobile hamburger -->
-      <div class="md:hidden flex justify-center">
+      <div class="md:hidden flex justify-start">
         <button
           class="text-white p-2 -m-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
           @click="mobileMenuOpen = !mobileMenuOpen"
