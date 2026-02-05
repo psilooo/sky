@@ -83,7 +83,9 @@ async function handleList(request: Request, env: Env): Promise<Response> {
   // No category = flat list of all files (no folder browsing)
   if (!category || !ALLOWED_CATEGORIES.includes(category)) {
     const listed = await env.MEDIA_BUCKET.list({ limit: 1000 })
-    const files = listed.objects.map((obj) => ({
+    const files = listed.objects
+      .filter((obj) => !obj.key.endsWith('/.folder'))
+      .map((obj) => ({
       key: obj.key,
       url: `${env.PUBLIC_BUCKET_URL}/${obj.key}`,
       filename: obj.key.split('/').pop() || obj.key,
