@@ -286,17 +286,22 @@ onUnmounted(() => {
                       <!-- Gallery -->
                       <div v-if="expandedEvent.gallery?.length">
                         <h4 class="font-display text-xl tracking-wider mb-3">GALLERY</h4>
-                        <div class="grid grid-cols-3 gap-2">
-                          <img
-                            v-for="(img, i) in expandedEvent.gallery.slice(0, 3)"
+                        <div class="grid grid-cols-2 md:grid-cols-4 auto-rows-[120px] md:auto-rows-[140px] gap-2">
+                          <div
+                            v-for="(img, i) in expandedEvent.gallery.slice(0, 5)"
                             :key="i"
-                            :src="imageUrl(img)"
-                            :alt="`${expandedEvent.title} gallery ${i + 1}`"
-                            class="w-full aspect-[3/2] object-cover rounded"
-                          />
+                            class="overflow-hidden rounded-lg group"
+                            :class="i === 0 ? 'col-span-2 md:row-span-2' : ''"
+                          >
+                            <img
+                              :src="imageUrl(img)"
+                              :alt="`${expandedEvent.title} gallery ${i + 1}`"
+                              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                          </div>
                         </div>
                         <NuxtLink
-                          v-if="expandedEvent.gallery.length > 3"
+                          v-if="expandedEvent.gallery.length > 5"
                           :to="`/media?event=${expandedEvent._id}`"
                           class="inline-block mt-3 font-display text-sm tracking-widest uppercase text-white hover:text-accent transition-colors"
                         >
@@ -307,7 +312,14 @@ onUnmounted(() => {
                       <!-- Video -->
                       <div v-if="expandedEvent.videoUrl">
                         <h4 class="font-display text-xl tracking-wider mb-3">RECAP</h4>
-                        <div class="aspect-video rounded overflow-hidden">
+                        <div
+                          :class="[
+                            'rounded-lg overflow-hidden',
+                            (expandedEvent.videoUrl.includes('youtube') || expandedEvent.videoUrl.includes('youtu.be'))
+                              ? 'aspect-video'
+                              : ''
+                          ]"
+                        >
                           <iframe
                             v-if="expandedEvent.videoUrl.includes('youtube') || expandedEvent.videoUrl.includes('youtu.be')"
                             :src="expandedEvent.videoUrl"
@@ -318,7 +330,7 @@ onUnmounted(() => {
                             v-else
                             :src="expandedEvent.videoUrl"
                             controls
-                            class="w-full h-full object-contain bg-black"
+                            class="w-full rounded-lg bg-black"
                           />
                         </div>
                       </div>
