@@ -24,7 +24,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 <template>
   <Teleport to="body">
     <Transition name="lightbox">
-      <div v-if="open" class="fixed inset-0 z-50 bg-dark/80 backdrop-blur-xl flex items-center justify-center" @click.self="emit('close')">
+      <div v-if="open" class="fixed inset-0 z-50 bg-dark/40 backdrop-blur-2xl flex items-center justify-center" @click.self="emit('close')">
         <button class="absolute top-6 right-6 text-white/60 hover:text-white text-2xl" @click="emit('close')">&#10005;</button>
         <button class="absolute left-6 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-3xl" @click="prev">&#8249;</button>
         <button class="absolute right-6 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-3xl" @click="next">&#8250;</button>
@@ -64,5 +64,5 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 <style scoped>
 .lightbox-enter-active, .lightbox-leave-active { transition: opacity 0.3s ease; }
 .lightbox-enter-from, .lightbox-leave-to { opacity: 0; }
-.lightbox-glow { box-shadow: 0 0 30px rgba(0, 229, 255, 0.15), 0 0 60px rgba(0, 229, 255, 0.05); }
+.lightbox-glow { box-shadow: 0 0 40px rgba(0, 229, 255, 0.08); }
 </style>
