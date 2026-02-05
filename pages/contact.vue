@@ -88,12 +88,12 @@ function resetForm() {
     <PageHeader title="CONTACT" />
     <section class="px-6 pb-24">
       <div ref="sectionRef" class="max-w-2xl mx-auto text-center">
-        <p v-if="settings?.contactTagline" class="text-xl text-white/60 mb-16">
+        <p v-if="settings?.contactTagline" class="text-xl text-white/60 mb-8">
           {{ settings.contactTagline }}
         </p>
 
         <!-- Social links -->
-        <div v-if="settings?.socialLinks" class="flex flex-wrap justify-center gap-6 mb-16">
+        <div v-if="settings?.socialLinks" class="flex flex-wrap justify-center gap-6 mb-8">
           <a
             v-for="social in settings.socialLinks.filter((s: any) => s.platform !== 'instagram')"
             :key="social.platform"
@@ -111,7 +111,7 @@ function resetForm() {
       </div>
 
       <!-- Contact Form -->
-      <div ref="formRef" class="max-w-xl mx-auto mt-8">
+      <div ref="formRef" class="max-w-xl mx-auto">
         <!-- Success state -->
         <div v-if="status === 'success'" class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 text-center">
           <p class="text-xl font-display tracking-wide text-accent mb-4">MESSAGE SENT</p>
