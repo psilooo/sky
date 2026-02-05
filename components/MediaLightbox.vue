@@ -29,17 +29,17 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
         <button class="absolute left-6 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-3xl" @click="prev">&#8249;</button>
         <button class="absolute right-6 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-3xl" @click="next">&#8250;</button>
 
-        <div class="max-w-5xl max-h-[85vh] w-full mx-6">
+        <div class="max-w-5xl w-full mx-6 flex flex-col items-center">
           <img
             v-if="current?.mediaType === 'photo' && current?.image"
             :src="imageUrl(current.image)"
             :alt="current.caption || current.title"
-            class="w-full h-full object-contain"
+            class="max-w-full max-h-[85vh] object-contain"
           />
           <div v-else-if="current?.mediaType === 'photo'" class="flex items-center justify-center h-64">
             <span class="text-white/30 font-display text-xl">No image available</span>
           </div>
-          <div v-else-if="current?.mediaType === 'video'" class="aspect-video">
+          <div v-else-if="current?.mediaType === 'video'" class="aspect-video w-full max-h-[85vh]">
             <iframe
               v-if="current.videoUrl && (current.videoUrl.includes('youtube') || current.videoUrl.includes('youtu.be'))"
               :src="current.videoUrl"
