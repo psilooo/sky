@@ -24,7 +24,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 <template>
   <Teleport to="body">
     <Transition name="lightbox">
-      <div v-if="open" class="fixed inset-0 z-50 bg-dark/95 flex items-center justify-center" @click.self="emit('close')">
+      <div v-if="open" class="fixed inset-0 z-50 bg-dark/80 backdrop-blur-xl flex items-center justify-center" @click.self="emit('close')">
         <button class="absolute top-6 right-6 text-white/60 hover:text-white text-2xl" @click="emit('close')">&#10005;</button>
         <button class="absolute left-6 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-3xl" @click="prev">&#8249;</button>
         <button class="absolute right-6 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-3xl" @click="next">&#8250;</button>
@@ -34,12 +34,12 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
             v-if="current?.mediaType === 'photo' && current?.image"
             :src="imageUrl(current.image)"
             :alt="current.caption || current.title"
-            class="max-w-full max-h-[85vh] object-contain"
+            class="max-w-full max-h-[85vh] object-contain rounded-lg lightbox-glow"
           />
           <div v-else-if="current?.mediaType === 'photo'" class="flex items-center justify-center h-64">
             <span class="text-white/30 font-display text-xl">No image available</span>
           </div>
-          <div v-else-if="current?.mediaType === 'video'" class="aspect-video w-full max-h-[85vh]">
+          <div v-else-if="current?.mediaType === 'video'" class="aspect-video w-full max-h-[85vh] rounded-lg lightbox-glow">
             <iframe
               v-if="current.videoUrl && (current.videoUrl.includes('youtube') || current.videoUrl.includes('youtu.be'))"
               :src="current.videoUrl"
@@ -64,4 +64,5 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 <style scoped>
 .lightbox-enter-active, .lightbox-leave-active { transition: opacity 0.3s ease; }
 .lightbox-enter-from, .lightbox-leave-to { opacity: 0; }
+.lightbox-glow { box-shadow: 0 0 30px rgba(0, 229, 255, 0.15), 0 0 60px rgba(0, 229, 255, 0.05); }
 </style>
