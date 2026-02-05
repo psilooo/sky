@@ -95,7 +95,7 @@ function resetForm() {
         <!-- Social links -->
         <div v-if="settings?.socialLinks" class="flex flex-wrap justify-center gap-6 mb-16">
           <a
-            v-for="social in settings.socialLinks"
+            v-for="social in settings.socialLinks.filter((s: any) => s.platform !== 'instagram')"
             :key="social.platform"
             :href="social.url"
             target="_blank"

@@ -9,7 +9,7 @@ const { data: settings } = await useSanityQuery(query)
       <span class="font-display text-lg tracking-wider text-white/60">SKY EVENTS ASIA</span>
       <div v-if="settings?.socialLinks" class="flex items-center gap-4">
         <a
-          v-for="social in settings.socialLinks"
+          v-for="social in settings.socialLinks.filter((s: any) => s.platform !== 'instagram')"
           :key="social.platform"
           :href="social.url"
           target="_blank"
@@ -20,9 +20,21 @@ const { data: settings } = await useSanityQuery(query)
           {{ social.platform }}
         </a>
       </div>
-      <div class="text-white/40 text-sm">
-        <a v-if="settings?.contactEmail" :href="`mailto:${settings.contactEmail}`" class="hover:text-accent transition-colors">
+      <div class="flex items-center gap-4">
+        <a v-if="settings?.contactEmail" :href="`mailto:${settings.contactEmail}`" class="text-white/40 text-sm hover:text-accent transition-colors">
           {{ settings.contactEmail }}
+        </a>
+        <a
+          v-if="settings?.socialLinks?.find((s: any) => s.platform === 'instagram')"
+          :href="settings.socialLinks.find((s: any) => s.platform === 'instagram').url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="font-display tracking-widest uppercase text-sm px-4 py-2 border border-accent/40 rounded-lg
+                 text-accent hover:bg-accent/10 hover:shadow-[0_0_16px_rgba(0,229,255,0.15)]
+                 transition-all duration-300"
+          aria-label="Instagram"
+        >
+          Instagram
         </a>
       </div>
     </div>
