@@ -7,6 +7,7 @@ export interface Env {
 const ALLOWED_CATEGORIES = ['events', 'team', 'general']
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif', 'video/mp4', 'video/quicktime', 'video/webm']
 const MAX_FILE_SIZE = 100 * 1024 * 1024 // 100MB
+const FOLDER_NAME_RE = /^[a-z0-9_-]+$/i
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -42,6 +43,7 @@ async function handleUpload(request: Request, env: Env): Promise<Response> {
   const formData = await request.formData()
   const file = formData.get('file') as File | null
   const category = (formData.get('category') as string) || 'general'
+  const folder = (formData.get('folder') as string) || ''
 
   if (!file) return errorResponse('No file provided', 400)
   if (file.size > MAX_FILE_SIZE) {
@@ -53,10 +55,15 @@ async function handleUpload(request: Request, env: Env): Promise<Response> {
   if (!ALLOWED_CATEGORIES.includes(category)) {
     return errorResponse(`Invalid category. Must be one of: ${ALLOWED_CATEGORIES.join(', ')}`, 400)
   }
+  if (folder && !FOLDER_NAME_RE.test(folder)) {
+    return errorResponse('Invalid folder name. Use only letters, numbers, hyphens, and underscores', 400)
+  }
 
   const timestamp = Date.now()
   const sanitized = sanitizeFilename(file.name)
-  const key = `${category}/${timestamp}-${sanitized}`
+  const key = folder
+    ? `${category}/${folder}/${timestamp}-${sanitized}`
+    : `${category}/${timestamp}-${sanitized}`
 
   await env.MEDIA_BUCKET.put(key, file.stream(), {
     httpMetadata: { contentType: file.type },
@@ -71,20 +78,70 @@ async function handleUpload(request: Request, env: Env): Promise<Response> {
 async function handleList(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url)
   const category = url.searchParams.get('category')
-  const prefix = category && ALLOWED_CATEGORIES.includes(category) ? `${category}/` : undefined
+  const folder = url.searchParams.get('folder')
 
-  const listed = await env.MEDIA_BUCKET.list({ prefix, limit: 1000 })
+  // No category = flat list of all files (no folder browsing)
+  if (!category || !ALLOWED_CATEGORIES.includes(category)) {
+    const listed = await env.MEDIA_BUCKET.list({ limit: 1000 })
+    const files = listed.objects.map((obj) => ({
+      key: obj.key,
+      url: `${env.PUBLIC_BUCKET_URL}/${obj.key}`,
+      filename: obj.key.split('/').pop() || obj.key,
+      category: obj.key.split('/')[0] || 'general',
+      size: obj.size,
+      uploaded: obj.uploaded.toISOString(),
+    }))
+    return jsonResponse({ files, folders: [] })
+  }
 
-  const files = listed.objects.map((obj) => ({
-    key: obj.key,
-    url: `${env.PUBLIC_BUCKET_URL}/${obj.key}`,
-    filename: obj.key.split('/').pop() || obj.key,
-    category: obj.key.split('/')[0] || 'general',
-    size: obj.size,
-    uploaded: obj.uploaded.toISOString(),
-  }))
+  // Category specified — use delimiter to discover folders
+  const prefix = folder && FOLDER_NAME_RE.test(folder)
+    ? `${category}/${folder}/`
+    : `${category}/`
 
-  return jsonResponse({ files })
+  const listed = await env.MEDIA_BUCKET.list({ prefix, delimiter: '/', limit: 1000 })
+
+  // Filter out .folder marker files from objects
+  const files = listed.objects
+    .filter((obj) => !obj.key.endsWith('/.folder'))
+    .map((obj) => ({
+      key: obj.key,
+      url: `${env.PUBLIC_BUCKET_URL}/${obj.key}`,
+      filename: obj.key.split('/').pop() || obj.key,
+      category: obj.key.split('/')[0] || 'general',
+      size: obj.size,
+      uploaded: obj.uploaded.toISOString(),
+    }))
+
+  // Extract folder names from delimited prefixes
+  const folders = (listed.delimitedPrefixes || []).map((p) => {
+    // prefix is "category/" or "category/folder/", delimitedPrefix is "category/subfolder/"
+    const stripped = p.slice(prefix.length) // "subfolder/"
+    return stripped.replace(/\/$/, '') // "subfolder"
+  }).filter(Boolean)
+
+  return jsonResponse({ files, folders })
+}
+
+async function handleCreateFolder(request: Request, env: Env): Promise<Response> {
+  let body: { category: string; folder: string }
+  try {
+    body = await request.json<{ category: string; folder: string }>()
+  } catch {
+    return errorResponse('Invalid JSON body', 400)
+  }
+
+  if (!body.category || !ALLOWED_CATEGORIES.includes(body.category)) {
+    return errorResponse(`Invalid category. Must be one of: ${ALLOWED_CATEGORIES.join(', ')}`, 400)
+  }
+  if (!body.folder || !FOLDER_NAME_RE.test(body.folder)) {
+    return errorResponse('Invalid folder name. Use only letters, numbers, hyphens, and underscores', 400)
+  }
+
+  const key = `${body.category}/${body.folder}/.folder`
+  await env.MEDIA_BUCKET.put(key, new ArrayBuffer(0))
+
+  return jsonResponse({ success: true, category: body.category, folder: body.folder })
 }
 
 async function handleDelete(request: Request, env: Env): Promise<Response> {
@@ -115,6 +172,7 @@ export default {
     const path = url.pathname
 
     if (request.method === 'POST' && path === '/upload') return handleUpload(request, env)
+    if (request.method === 'POST' && path === '/create-folder') return handleCreateFolder(request, env)
     if (request.method === 'GET' && path === '/list') return handleList(request, env)
     if (request.method === 'DELETE' && path === '/delete') return handleDelete(request, env)
 
