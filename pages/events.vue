@@ -286,31 +286,32 @@ onUnmounted(() => {
                       <!-- Gallery (video as hero item if present) -->
                       <div v-if="expandedEvent.gallery?.length || expandedEvent.videoUrl">
                         <h4 class="font-display text-xl tracking-wider mb-3">GALLERY</h4>
-                        <div class="grid grid-cols-2 md:grid-cols-4 auto-rows-[120px] md:auto-rows-[140px] gap-2">
-                          <!-- Video hero -->
+                        <!-- Video -->
+                        <div v-if="expandedEvent.videoUrl" class="mb-2">
                           <div
-                            v-if="expandedEvent.videoUrl"
-                            class="overflow-hidden rounded-lg col-span-2 md:row-span-2"
+                            v-if="expandedEvent.videoUrl.includes('youtube') || expandedEvent.videoUrl.includes('youtu.be')"
+                            class="aspect-video rounded-lg overflow-hidden"
                           >
                             <iframe
-                              v-if="expandedEvent.videoUrl.includes('youtube') || expandedEvent.videoUrl.includes('youtu.be')"
                               :src="expandedEvent.videoUrl"
                               class="w-full h-full"
                               allowfullscreen
                             />
-                            <video
-                              v-else
-                              :src="expandedEvent.videoUrl"
-                              controls
-                              class="w-full h-full object-cover"
-                            />
                           </div>
-                          <!-- Gallery images -->
+                          <video
+                            v-else
+                            :src="expandedEvent.videoUrl"
+                            controls
+                            class="max-w-full max-h-[576px] mx-auto rounded-lg"
+                          />
+                        </div>
+                        <!-- Images grid -->
+                        <div v-if="expandedEvent.gallery?.length" class="grid grid-cols-2 md:grid-cols-4 auto-rows-[120px] md:auto-rows-[140px] gap-2">
                           <div
-                            v-for="(img, i) in expandedEvent.gallery?.slice(0, expandedEvent.videoUrl ? 4 : 5) || []"
+                            v-for="(img, i) in expandedEvent.gallery.slice(0, 5)"
                             :key="i"
                             class="overflow-hidden rounded-lg group"
-                            :class="!expandedEvent.videoUrl && i === 0 ? 'col-span-2 md:row-span-2' : ''"
+                            :class="i === 0 ? 'col-span-2 md:row-span-2' : ''"
                           >
                             <img
                               :src="imageUrl(img)"
@@ -320,7 +321,7 @@ onUnmounted(() => {
                           </div>
                         </div>
                         <NuxtLink
-                          v-if="expandedEvent.gallery?.length > (expandedEvent.videoUrl ? 4 : 5)"
+                          v-if="expandedEvent.gallery?.length > 5"
                           :to="`/media?event=${expandedEvent._id}`"
                           class="inline-block mt-3 font-display text-sm tracking-widest uppercase text-white hover:text-accent transition-colors"
                         >
