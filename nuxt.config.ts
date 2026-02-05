@@ -5,6 +5,7 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss', '@nuxtjs/google-fonts'],
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
+    resendApiKey: '',
     public: {
       sanity: {
         projectId: 'glybi1mo',
