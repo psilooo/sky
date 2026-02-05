@@ -104,7 +104,7 @@ function resetForm() {
         <!-- Form -->
         <form v-else @submit.prevent="handleSubmit" class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 space-y-6">
           <div>
-            <label for="name" class="block text-sm font-display tracking-widest uppercase text-white/40 mb-2">Name</label>
+            <label for="name" class="block text-sm font-display tracking-widest uppercase text-white/80 mb-2">Name</label>
             <input
               id="name"
               v-model="form.name"
@@ -118,7 +118,7 @@ function resetForm() {
           </div>
 
           <div>
-            <label for="email" class="block text-sm font-display tracking-widest uppercase text-white/40 mb-2">Email</label>
+            <label for="email" class="block text-sm font-display tracking-widest uppercase text-white/80 mb-2">Email</label>
             <input
               id="email"
               v-model="form.email"
@@ -132,7 +132,7 @@ function resetForm() {
           </div>
 
           <div>
-            <label for="message" class="block text-sm font-display tracking-widest uppercase text-white/40 mb-2">Message</label>
+            <label for="message" class="block text-sm font-display tracking-widest uppercase text-white/80 mb-2">Message</label>
             <textarea
               id="message"
               v-model="form.message"
