@@ -25,8 +25,7 @@ const { data: settings } = await useSanityQuery(query)
           {{ settings.contactEmail }}
         </a>
         <a
-          v-if="settings?.socialLinks?.find((s: any) => s.platform === 'instagram')"
-          :href="settings.socialLinks.find((s: any) => s.platform === 'instagram').url"
+          href="https://www.instagram.com/skyeventsasia/"
           target="_blank"
           rel="noopener noreferrer"
           class="font-display tracking-widest uppercase text-sm px-4 py-2 border border-accent/40 rounded-lg

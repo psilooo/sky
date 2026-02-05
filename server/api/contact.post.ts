@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
 
   const { error } = await resend.emails.send({
     from: 'SKY Events Asia <onboarding@resend.dev>',
-    to: '03.kylewis@gmail.com',
+    to: 'skyeventsasia@gmail.com',
     replyTo: email,
     subject: `Contact Form: ${name.trim()}`,
     html: `
