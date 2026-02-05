@@ -18,9 +18,7 @@ const eventGalleryQuery = groq`*[_type == "event" && (count(gallery) > 0 || defi
 }`
 const { data: eventGalleries } = await useSanityQuery(eventGalleryQuery)
 
-const route = useRoute()
-
-const activeFilter = ref(typeof route.query.event === 'string' ? route.query.event : 'all')
+const activeFilter = ref('all')
 const lightboxOpen = ref(false)
 const lightboxIndex = ref(0)
 
@@ -69,35 +67,14 @@ const mergedItems = computed(() => {
 const filteredItems = computed(() => {
   if (!mergedItems.value.length) return []
   if (activeFilter.value === 'all') return mergedItems.value
-  if (activeFilter.value === 'photo' || activeFilter.value === 'video') {
-    return mergedItems.value.filter((item: any) => item.mediaType === activeFilter.value)
-  }
-  // Filter by event ID
-  return mergedItems.value.filter((item: any) => item.eventId === activeFilter.value)
+  return mergedItems.value.filter((item: any) => item.mediaType === activeFilter.value)
 })
 
-// Auto-generate filter pills from all unique events in mergedItems
-const filters = computed(() => {
-  const base = [
-    { label: 'All', value: 'all' },
-    { label: 'Photos', value: 'photo' },
-    { label: 'Videos', value: 'video' },
-  ]
-
-  const eventMap = new Map<string, string>()
-  for (const item of mergedItems.value) {
-    if (item.eventId && item.eventTitle && !eventMap.has(item.eventId)) {
-      eventMap.set(item.eventId, item.eventTitle)
-    }
-  }
-
-  const eventFilters = Array.from(eventMap.entries()).map(([id, title]) => ({
-    label: title,
-    value: id,
-  }))
-
-  return [...base, ...eventFilters]
-})
+const filters = [
+  { label: 'All', value: 'all' },
+  { label: 'Photos', value: 'photo' },
+  { label: 'Videos', value: 'video' },
+]
 
 function openLightbox(index: number) {
   lightboxIndex.value = index
