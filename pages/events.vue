@@ -302,7 +302,7 @@ onUnmounted(() => {
                             v-else
                             :src="expandedEvent.videoUrl"
                             controls
-                            class="max-w-full max-h-[576px] mx-auto rounded-lg"
+                            class="max-w-full max-h-[85vh] mx-auto rounded-lg"
                           />
                         </div>
                         <!-- Images grid -->
