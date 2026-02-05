@@ -173,22 +173,51 @@ function animateOpen(el: HTMLElement, onDone?: () => void) {
   )
 }
 
-const videoLightboxUrl = ref<string | null>(null)
+// Gallery/video lightbox
+const lightboxOpen = ref(false)
+const lightboxIndex = ref(0)
 
-function openVideoLightbox(url: string) {
-  videoLightboxUrl.value = url
+const lightboxItems = computed(() => {
+  if (!expandedEvent.value) return []
+  const items: { type: 'video' | 'image'; src: string }[] = []
+  const ev = expandedEvent.value
+  if (ev.videoUrl && !(ev.videoUrl.includes('youtube') || ev.videoUrl.includes('youtu.be'))) {
+    items.push({ type: 'video', src: ev.videoUrl })
+  }
+  if (ev.gallery?.length) {
+    const limit = ev.videoUrl ? 4 : 5
+    for (const img of ev.gallery.slice(0, limit)) {
+      items.push({ type: 'image', src: imageUrl(img) })
+    }
+  }
+  return items
+})
+
+function openLightbox(index: number) {
+  lightboxIndex.value = index
+  lightboxOpen.value = true
 }
-function closeVideoLightbox() {
-  videoLightboxUrl.value = null
+function closeLightbox() {
+  lightboxOpen.value = false
 }
-function onVideoLightboxKey(e: KeyboardEvent) {
-  if (e.key === 'Escape') closeVideoLightbox()
+function lightboxNext() {
+  if (lightboxItems.value.length <= 1) return
+  lightboxIndex.value = (lightboxIndex.value + 1) % lightboxItems.value.length
 }
-watch(videoLightboxUrl, (url) => {
-  if (url) {
-    window.addEventListener('keydown', onVideoLightboxKey)
+function lightboxPrev() {
+  if (lightboxItems.value.length <= 1) return
+  lightboxIndex.value = (lightboxIndex.value - 1 + lightboxItems.value.length) % lightboxItems.value.length
+}
+function onLightboxKey(e: KeyboardEvent) {
+  if (e.key === 'Escape') closeLightbox()
+  if (e.key === 'ArrowRight') lightboxNext()
+  if (e.key === 'ArrowLeft') lightboxPrev()
+}
+watch(lightboxOpen, (open) => {
+  if (open) {
+    window.addEventListener('keydown', onLightboxKey)
   } else {
-    window.removeEventListener('keydown', onVideoLightboxKey)
+    window.removeEventListener('keydown', onLightboxKey)
   }
 })
 
@@ -310,7 +339,7 @@ onUnmounted(() => {
                           <div
                             v-if="expandedEvent.videoUrl && !(expandedEvent.videoUrl.includes('youtube') || expandedEvent.videoUrl.includes('youtu.be'))"
                             class="overflow-hidden rounded-lg col-span-2 md:row-span-2 relative cursor-pointer group"
-                            @click="openVideoLightbox(expandedEvent.videoUrl)"
+                            @click="openLightbox(0)"
                           >
                             <video
                               :src="expandedEvent.videoUrl"
@@ -338,8 +367,9 @@ onUnmounted(() => {
                           <div
                             v-for="(img, i) in expandedEvent.gallery?.slice(0, expandedEvent.videoUrl ? 4 : 5) || []"
                             :key="i"
-                            class="overflow-hidden rounded-lg group"
+                            class="overflow-hidden rounded-lg group cursor-pointer"
                             :class="!expandedEvent.videoUrl && i === 0 ? 'col-span-2 md:row-span-2' : ''"
+                            @click="openLightbox(expandedEvent.videoUrl && !(expandedEvent.videoUrl.includes('youtube') || expandedEvent.videoUrl.includes('youtu.be')) ? i + 1 : i)"
                           >
                             <img
                               :src="imageUrl(img)"
@@ -374,18 +404,29 @@ onUnmounted(() => {
       </div>
     </section>
 
-    <!-- Video lightbox -->
+    <!-- Gallery lightbox -->
     <Teleport to="body">
       <Transition name="lightbox">
-        <div v-if="videoLightboxUrl" class="fixed inset-0 z-50 bg-dark/40 backdrop-blur-2xl flex items-center justify-center" @click.self="closeVideoLightbox">
-          <button class="absolute top-6 right-6 text-white/60 hover:text-white text-2xl" @click="closeVideoLightbox">&#10005;</button>
+        <div v-if="lightboxOpen && lightboxItems.length" class="fixed inset-0 z-50 bg-dark/40 backdrop-blur-2xl flex items-center justify-center" @click.self="closeLightbox">
+          <button class="absolute top-6 right-6 text-white/60 hover:text-white text-2xl" @click="closeLightbox">&#10005;</button>
+          <button v-if="lightboxItems.length > 1" class="absolute left-6 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-3xl" @click="lightboxPrev">&#8249;</button>
+          <button v-if="lightboxItems.length > 1" class="absolute right-6 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-3xl" @click="lightboxNext">&#8250;</button>
           <div class="max-w-5xl w-full mx-6 flex flex-col items-center">
             <video
-              :key="videoLightboxUrl"
-              :src="videoLightboxUrl"
+              v-if="lightboxItems[lightboxIndex]?.type === 'video'"
+              :key="lightboxItems[lightboxIndex].src"
+              :src="lightboxItems[lightboxIndex].src"
               controls
               autoplay
               class="max-w-full max-h-[85vh] rounded-lg"
+              style="box-shadow: 0 0 40px rgba(0, 229, 255, 0.08);"
+            />
+            <img
+              v-else-if="lightboxItems[lightboxIndex]?.type === 'image'"
+              :key="lightboxItems[lightboxIndex].src"
+              :src="lightboxItems[lightboxIndex].src"
+              :alt="`Gallery image ${lightboxIndex + 1}`"
+              class="max-w-full max-h-[85vh] object-contain rounded-lg"
               style="box-shadow: 0 0 40px rgba(0, 229, 255, 0.08);"
             />
           </div>
