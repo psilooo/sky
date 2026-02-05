@@ -28,7 +28,15 @@ function getSize(item: any, index: number): string {
         :alt="item.caption || item.title"
         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
       />
-      <div v-else class="w-full h-full bg-dark-card flex items-center justify-center">
+      <video
+        v-else-if="item.mediaType === 'video' && item.videoUrl"
+        :src="item.videoUrl"
+        preload="metadata"
+        muted
+        playsinline
+        class="w-full h-full object-cover"
+      />
+      <div v-else class="w-full h-full bg-dark-lighter flex items-center justify-center">
         <span class="text-white/20 font-display text-sm">{{ item.title }}</span>
       </div>
       <div class="absolute inset-0 bg-white/0 group-hover:bg-white/10 group-hover:backdrop-blur-[2px] group-hover:border group-hover:border-white/10 transition-all flex items-center justify-center">

@@ -40,7 +40,19 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
             <span class="text-white/30 font-display text-xl">No image available</span>
           </div>
           <div v-else-if="current?.mediaType === 'video'" class="aspect-video">
-            <iframe :src="current.videoUrl" class="w-full h-full" allowfullscreen />
+            <iframe
+              v-if="current.videoUrl && (current.videoUrl.includes('youtube') || current.videoUrl.includes('youtu.be'))"
+              :src="current.videoUrl"
+              class="w-full h-full"
+              allowfullscreen
+            />
+            <video
+              v-else-if="current.videoUrl"
+              :key="current._id"
+              :src="current.videoUrl"
+              controls
+              class="w-full h-full object-contain bg-black"
+            />
           </div>
           <p v-if="current?.caption" class="text-center text-white/50 mt-4">{{ current.caption }}</p>
         </div>

@@ -13,27 +13,91 @@ const query = groq`*[_type == "mediaItem"] | order(uploadDate desc) {
 }`
 const { data: allItems } = await useSanityQuery(query)
 
-const eventsQuery = groq`*[_type == "event"] | order(date desc) { _id, title }`
-const { data: events } = await useSanityQuery(eventsQuery)
+const eventGalleryQuery = groq`*[_type == "event" && (count(gallery) > 0 || defined(videoUrl))] | order(date desc) {
+  _id, title, gallery, videoUrl
+}`
+const { data: eventGalleries } = await useSanityQuery(eventGalleryQuery)
 
-const activeFilter = ref('all')
+const route = useRoute()
+
+const activeFilter = ref(typeof route.query.event === 'string' ? route.query.event : 'all')
 const lightboxOpen = ref(false)
 const lightboxIndex = ref(0)
 
-const filteredItems = computed(() => {
-  if (!allItems.value) return []
-  if (activeFilter.value === 'all') return allItems.value
-  if (activeFilter.value === 'photo' || activeFilter.value === 'video') {
-    return allItems.value.filter((item: any) => item.mediaType === activeFilter.value)
+// Transform event gallery URLs into mediaItem-compatible shapes and merge with real mediaItems
+const mergedItems = computed(() => {
+  const items: any[] = []
+
+  // Add real mediaItems first
+  if (allItems.value) {
+    items.push(...allItems.value)
   }
-  return allItems.value.filter((item: any) => item.eventId === activeFilter.value)
+
+  // Add event gallery images and videos
+  if (eventGalleries.value) {
+    for (const event of eventGalleries.value) {
+      // Gallery images
+      if (event.gallery?.length) {
+        for (let i = 0; i < event.gallery.length; i++) {
+          items.push({
+            _id: `${event._id}-gallery-${i}`,
+            title: event.title,
+            mediaType: 'photo',
+            image: event.gallery[i],
+            eventTitle: event.title,
+            eventId: event._id,
+          })
+        }
+      }
+      // Video
+      if (event.videoUrl) {
+        items.push({
+          _id: `${event._id}-video`,
+          title: `${event.title} Recap`,
+          mediaType: 'video',
+          videoUrl: event.videoUrl,
+          eventTitle: event.title,
+          eventId: event._id,
+        })
+      }
+    }
+  }
+
+  return items
 })
 
-const filters = [
-  { label: 'All', value: 'all' },
-  { label: 'Photos', value: 'photo' },
-  { label: 'Videos', value: 'video' },
-]
+const filteredItems = computed(() => {
+  if (!mergedItems.value.length) return []
+  if (activeFilter.value === 'all') return mergedItems.value
+  if (activeFilter.value === 'photo' || activeFilter.value === 'video') {
+    return mergedItems.value.filter((item: any) => item.mediaType === activeFilter.value)
+  }
+  // Filter by event ID
+  return mergedItems.value.filter((item: any) => item.eventId === activeFilter.value)
+})
+
+// Auto-generate filter pills from all unique events in mergedItems
+const filters = computed(() => {
+  const base = [
+    { label: 'All', value: 'all' },
+    { label: 'Photos', value: 'photo' },
+    { label: 'Videos', value: 'video' },
+  ]
+
+  const eventMap = new Map<string, string>()
+  for (const item of mergedItems.value) {
+    if (item.eventId && item.eventTitle && !eventMap.has(item.eventId)) {
+      eventMap.set(item.eventId, item.eventTitle)
+    }
+  }
+
+  const eventFilters = Array.from(eventMap.entries()).map(([id, title]) => ({
+    label: title,
+    value: id,
+  }))
+
+  return [...base, ...eventFilters]
+})
 
 function openLightbox(index: number) {
   lightboxIndex.value = index
@@ -48,11 +112,11 @@ function openLightbox(index: number) {
       <div class="max-w-7xl mx-auto">
         <!-- Filter bar -->
         <div class="flex justify-center mb-12">
-          <div class="inline-flex gap-2 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-1.5">
+          <div class="inline-flex gap-2 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-1.5 overflow-x-auto">
             <button
               v-for="filter in filters"
               :key="filter.value"
-              class="font-display text-base tracking-widest uppercase px-8 py-1.5 rounded-lg transition-all flex-1 text-center"
+              class="font-display text-base tracking-widest uppercase px-8 py-1.5 rounded-lg transition-all flex-shrink-0 text-center whitespace-nowrap"
               :class="activeFilter === filter.value
                 ? 'bg-white/10 backdrop-blur-sm text-accent border border-white/15'
                 : 'text-white/60 hover:text-white border border-transparent'"

@@ -286,22 +286,40 @@ onUnmounted(() => {
                       <!-- Gallery -->
                       <div v-if="expandedEvent.gallery?.length">
                         <h4 class="font-display text-xl tracking-wider mb-3">GALLERY</h4>
-                        <div class="grid grid-cols-3 md:grid-cols-4 gap-2">
+                        <div class="grid grid-cols-3 gap-2">
                           <img
-                            v-for="(img, i) in expandedEvent.gallery"
+                            v-for="(img, i) in expandedEvent.gallery.slice(0, 3)"
                             :key="i"
                             :src="imageUrl(img)"
                             :alt="`${expandedEvent.title} gallery ${i + 1}`"
                             class="w-full aspect-[3/2] object-cover rounded"
                           />
                         </div>
+                        <NuxtLink
+                          v-if="expandedEvent.gallery.length > 3"
+                          :to="`/media?event=${expandedEvent._id}`"
+                          class="inline-block mt-3 font-display text-sm tracking-widest uppercase text-accent hover:text-white transition-colors"
+                        >
+                          See More ({{ expandedEvent.gallery.length }} photos) &rarr;
+                        </NuxtLink>
                       </div>
 
                       <!-- Video -->
                       <div v-if="expandedEvent.videoUrl">
                         <h4 class="font-display text-xl tracking-wider mb-3">RECAP</h4>
                         <div class="aspect-video rounded overflow-hidden">
-                          <iframe :src="expandedEvent.videoUrl" class="w-full h-full" allowfullscreen />
+                          <iframe
+                            v-if="expandedEvent.videoUrl.includes('youtube') || expandedEvent.videoUrl.includes('youtu.be')"
+                            :src="expandedEvent.videoUrl"
+                            class="w-full h-full"
+                            allowfullscreen
+                          />
+                          <video
+                            v-else
+                            :src="expandedEvent.videoUrl"
+                            controls
+                            class="w-full h-full object-contain bg-black"
+                          />
                         </div>
                       </div>
 

@@ -5,8 +5,8 @@ export interface Env {
 }
 
 const ALLOWED_CATEGORIES = ['events', 'team', 'general']
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif']
-const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif', 'video/mp4', 'video/quicktime', 'video/webm']
+const MAX_FILE_SIZE = 100 * 1024 * 1024 // 100MB
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
