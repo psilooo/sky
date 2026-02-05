@@ -6,7 +6,17 @@ const { imageUrl } = useR2Image()
 const containerRef = ref<HTMLElement | null>(null)
 useStaggerReveal(containerRef, '.media-card')
 
+const portraitVideos = reactive(new Set<string>())
+
+function onVideoMeta(event: Event, itemId: string) {
+  const video = event.target as HTMLVideoElement
+  if (video.videoHeight > video.videoWidth) {
+    portraitVideos.add(itemId)
+  }
+}
+
 function getSize(item: any, index: number): string {
+  if (portraitVideos.has(item._id)) return 'row-span-2'
   if (item.featured) return 'col-span-2 row-span-2'
   if (index % 5 === 0) return 'col-span-2'
   return ''
@@ -34,7 +44,8 @@ function getSize(item: any, index: number): string {
         preload="metadata"
         muted
         playsinline
-        class="w-full h-full object-contain"
+        class="w-full h-full object-cover"
+        @loadedmetadata="onVideoMeta($event, item._id)"
       />
       <div v-else class="w-full h-full bg-dark-lighter flex items-center justify-center">
         <span class="text-white/20 font-display text-sm">{{ item.title }}</span>
